@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.R
-import com.example.weatherapp.ui.theme.main.MainViewModel
+import com.example.weatherapp.ui.main.MainViewModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*

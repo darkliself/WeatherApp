@@ -15,9 +15,9 @@ import com.example.weatherapp.model.Current
 import com.example.weatherapp.model.Weather
 import com.example.weatherapp.navigation.Navigation
 import com.example.weatherapp.navigation.NavigationScreens
+import com.example.weatherapp.ui.main.MainViewModel
 import com.example.weatherapp.ui.screens.MainScreen
 import com.example.weatherapp.ui.theme.WeatherAppTheme
-import com.example.weatherapp.ui.theme.main.MainViewModel
 
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
