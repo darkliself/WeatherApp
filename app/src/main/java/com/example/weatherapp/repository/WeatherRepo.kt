@@ -2,7 +2,8 @@ package com.example.weatherapp.repository
 
 import com.example.weatherapp.api.openweather.WeatherApiInterface
 import com.example.weatherapp.di.Constants
-import com.example.weatherapp.model.*
+import com.example.weatherapp.data.model.*
+import com.example.weatherapp.data.model.city.CityItem
 import javax.inject.Inject
 
 class WeatherRepo @Inject constructor(
@@ -11,6 +12,11 @@ class WeatherRepo @Inject constructor(
     suspend fun getWeather(): Weather {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY)
     }
+
+    suspend fun findCity(cityName: String): List<CityItem> {
+        return weatherService.findCity(cityName, 5, Constants.API_KEY)
+    }
+
     suspend fun getCurrentWeather(): Current {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY).current
     }

@@ -11,13 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.weatherapp.model.Current
-import com.example.weatherapp.model.Weather
+import com.example.weatherapp.data.model.Weather
 import com.example.weatherapp.navigation.Navigation
-import com.example.weatherapp.navigation.NavigationScreens
 import com.example.weatherapp.ui.main.MainViewModel
-import com.example.weatherapp.ui.screens.MainScreen
-import com.example.weatherapp.ui.theme.WeatherAppTheme
 
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -28,13 +24,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            Navigation()
 //            WeatherAppTheme {
 //                // A surface container using the 'background' color from the theme
 //                Surface(
 //                    modifier = Modifier.fillMaxSize(),
 //                    color = MaterialTheme.colors.background
 //                ) {
-            Navigation()
+
 //                }
 //            }
         }
@@ -44,7 +41,6 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Greeting() {
-
     val scope = rememberCoroutineScope()
     val homeViewModel = viewModel(modelClass = MainViewModel::class.java)
     val state by homeViewModel.state.collectAsState()
@@ -53,21 +49,6 @@ fun Greeting() {
     scope.launch {
         state2 = homeViewModel.state.value
     }
-
-
-//    Button(onClick = {
-//        scope.launch {
-//            state2 = listOf(homeViewModel.getCurrent())
-//            println( state2 )
-//            println(state[0])
-//        }
-//
-//
-//    }) {
-//            Text(text = "is empty")
-//
-//    }
-
     Column() {
         if (state2.isEmpty()) {
            CircularProgressIndicator(
@@ -83,7 +64,5 @@ fun Greeting() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    WeatherAppTheme {
-        Greeting()
-    }
+
 }
