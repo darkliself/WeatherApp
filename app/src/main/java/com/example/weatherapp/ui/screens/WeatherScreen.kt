@@ -46,7 +46,6 @@ fun WeatherScreen() {
         }
     }
 
-
     Box(
         Modifier
             .fillMaxSize()
@@ -69,8 +68,6 @@ fun WeatherScreen() {
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-
-
             Text("20C")
             // Divider(color = Color.Black, thickness = 2.dp, modifier = Modifier.rotate(90f).border(width = 20.dp, Color.Black))
 
