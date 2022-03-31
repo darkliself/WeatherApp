@@ -1,5 +1,7 @@
 package com.example.weatherapp.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
@@ -34,6 +36,7 @@ fun Navigation() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationScreens(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.FindCity.route) {

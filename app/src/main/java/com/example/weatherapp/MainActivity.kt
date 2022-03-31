@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.data.model.Weather
 import com.example.weatherapp.navigation.Navigation
 import com.example.weatherapp.ui.main.MainViewModel
+import com.example.weatherapp.ui.theme.WeatherAppTheme
 import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -41,9 +42,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-         val navController = rememberNavController()
-            Navigation()
+            WeatherAppTheme() {
+                // val navController = rememberNavController()
+                Navigation()
+            }
         }
     }
 }

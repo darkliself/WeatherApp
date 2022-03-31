@@ -2,7 +2,7 @@ package com.example.weatherapp.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.data.model.Weather
+import com.example.weatherapp.data.model.*
 import com.example.weatherapp.data.model.city.CityItem
 import com.example.weatherapp.repository.WeatherRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,18 +16,32 @@ class MainViewModel @Inject constructor(
     private val weatherRepo: WeatherRepo
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<Weather>())
-    val state: StateFlow<List<Weather>>
+    private val _state = MutableStateFlow(emptyList<FullWeather>())
+    val state: MutableStateFlow<List<FullWeather>>
         get() = _state
+
+    private var _tests  = MutableStateFlow(emptyList<FullWeather>())
+    val tests: MutableStateFlow<List<FullWeather>>
+        get() = _tests
 
     init {
         viewModelScope.launch {
-            val weather = weatherRepo.getWeather()
-            _state.value = listOf(weather)
+            val weatherz = weatherRepo.getWeather()
+            _state.value = listOf(weatherz)
         }
     }
 
     suspend fun findCity(cityName: String): List<CityItem> {
             return weatherRepo.findCity(cityName)
     }
+
+    suspend fun getCurrent(): List<FullWeather> {
+        tests.value = listOf(weatherRepo.getCurrentWeather())
+        return _tests.value
+    }
+    suspend fun getCurrent2(): List<Hourly> {
+
+        return weatherRepo.getHourlyWeather()
+    }
+
 }

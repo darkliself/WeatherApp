@@ -1,6 +1,8 @@
 package com.example.weatherapp.data.model
 
-data class Weather(
+
+
+data class FullWeather(
         val current: Current,
         val daily: List<Daily>,
         val hourly: List<Hourly>,
@@ -13,9 +15,14 @@ data class Weather(
 data class TimeZoneData(
     val timezone: String,
     val timezone_offset: Long
-) {
+)
 
-}
+data class Weather(
+    val id: Int,
+    val main: String,
+    val description: String,
+    val icon: String
+)
 
 data class Current(
     val clouds: Int,
@@ -34,6 +41,8 @@ data class Current(
     val wind_gust: Double,
     val wind_speed: Double
 )
+
+
 
 data class Daily(
     val clouds: Int,

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class WeatherRepo @Inject constructor(
     private val weatherService: WeatherApiInterface
 ) {
-    suspend fun getWeather(): Weather {
+    suspend fun getWeather(): FullWeather {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY)
     }
 
@@ -17,8 +17,8 @@ class WeatherRepo @Inject constructor(
         return weatherService.findCity(cityName, 5, Constants.API_KEY)
     }
 
-    suspend fun getCurrentWeather(): Current {
-        return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY).current
+    suspend fun getCurrentWeather(): FullWeather {
+        return weatherService.getWeatherSome(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY)
     }
     suspend fun getHourlyWeather(): List<Hourly> {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY).hourly
