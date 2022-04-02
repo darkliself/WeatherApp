@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.data.model.Current
 import com.example.weatherapp.data.model.Daily
+import com.example.weatherapp.data.model.Hourly
 import com.example.weatherapp.ui.main.MainViewModel
 import java.time.Clock
 import java.time.LocalDate
@@ -44,25 +45,23 @@ import kotlin.math.roundToInt
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TodayScreen() {
-    val scope = rememberCoroutineScope()
-    val homeViewModel = hiltViewModel<MainViewModel>()
-    val testList = listOf("123", "123", "123", "123", "123", "123", "123")
-
-    val fullWeather by homeViewModel.state.collectAsState()
     lateinit var current: Current
     lateinit var daily: List<Daily>
+    lateinit var hourly: List<Hourly>
+    val scope = rememberCoroutineScope()
+    val homeViewModel = hiltViewModel<MainViewModel>()
+    val fullWeather by homeViewModel.state.collectAsState()
     val date = LocalDate.now(Clock.systemDefaultZone())
-    val dayOfTheWeek =
-        date.dayOfWeek.name.lowercase().replaceFirstChar { it.titlecase(Locale.getDefault()) }
+    val dayOfTheWeek = date
+        .dayOfWeek.name.lowercase().replaceFirstChar { it.titlecase(Locale.getDefault()) }
     val day = date.dayOfMonth
     val month = date.month.toString().lowercase().replaceFirstChar { it.uppercase() }
 
     if (fullWeather.isNotEmpty()) {
         current = fullWeather[0].current
         daily = fullWeather[0].daily
+        hourly = fullWeather[0].hourly
     }
-
-    // println(arr)
 
     LazyColumn(
         Modifier
@@ -83,8 +82,6 @@ fun TodayScreen() {
                 CircularProgressIndicator(modifier = Modifier.fillMaxSize())
             }
         } else {
-
-
             item() {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -108,7 +105,6 @@ fun TodayScreen() {
                         )
                     }
                 }
-
 
                 Column() {
                     Row(
@@ -153,9 +149,12 @@ fun TodayScreen() {
                             .padding(10.dp),
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
-                        WeatherInfoWidget(listOf(
-                            "${daily[0].temp.max.roundToInt()}°/${daily[0].temp.min.roundToInt()}° Feels like ",
-                            "${current.feels_like.roundToInt()}°C"))
+                        WeatherInfoWidget(
+                            listOf(
+                                "${daily[0].temp.max.roundToInt()}°/${daily[0].temp.min.roundToInt()}° Feels like ",
+                                "${current.feels_like.roundToInt()}°C"
+                            )
+                        )
                         WeatherInfoWidget(listOf("Wind ", "${current.wind_speed}m/s ", "WSW"))
                         Text("->", modifier = Modifier.rotate(170f))
                     }
@@ -175,8 +174,8 @@ fun TodayScreen() {
                         .padding(10.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    WeatherInfoWidget(listOf("Precipitation: ", "21%"))
-                    WeatherInfoWidget(listOf("Humidity: ", "59%"))
+                    WeatherInfoWidget(listOf("Sunrise: ", getTime(current.sunrise, "hh:mm")))
+                    WeatherInfoWidget(listOf("Humidity: ", "${daily[0].humidity.toString()}%"))
                 }
 
                 Row(
@@ -186,22 +185,30 @@ fun TodayScreen() {
                         .padding(10.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    WeatherInfoWidget(listOf("Wind: ", "10 km/h"))
-                    WeatherInfoWidget(listOf("Sunset: ", "29%"))
+                    WeatherInfoWidget(listOf("Wind: ", "${current.wind_speed} m/s"))
+                    WeatherInfoWidget(listOf("Sunset: ", getTime(current.sunset, "hh:mm")))
                 }
+
                 LazyRow(
                     contentPadding = PaddingValues(5.dp)
                 ) {
-                    items(testList.count()) { index ->
-                        WeatherWidgetItem(item = testList[index], Modifier)
+                    items(hourly.count() - 1) { index ->
+                        WeatherHourlyItem(
+                            listOf(
+                                getTime(hourly[index + 1].dt, "hh:mm"),
+                                hourly[index + 1].weather[0].icon,
+                                "${hourly[index + 1].temp.roundToInt()}°C"
+                            )
+                        )
                     }
                 }
             }
 
-            item(20) {
+            item() {
                 Box(
                     Modifier
-                        .fillMaxWidth(0.9f)
+                        .fillMaxWidth(0.98f)
+                        .clip(shape = RoundedCornerShape(15.dp))
                         .background(
                             brush = Brush.linearGradient(
                                 colors = listOf(
@@ -213,7 +220,11 @@ fun TodayScreen() {
                 ) {
                     Column(Modifier.fillMaxWidth()) {
                         repeat(20) {
-                            DailyItem(listOf("today", "@", "67°", "67°"))
+                            DailyItem(listOf(
+                                "daily[it].toString()",
+                                "@",
+                                "67°",
+                                "67°"))
                         }
                     }
                 }
@@ -224,8 +235,8 @@ fun TodayScreen() {
 
 
 @Composable
-fun WeatherWidgetItem(
-    item: String,
+fun WeatherHourlyItem(
+    items: List<String>,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -235,16 +246,17 @@ fun WeatherWidgetItem(
             .padding(5.dp)
             .clip(shape = RoundedCornerShape(30.dp))
             .background(Color(0xFFFFFFFF).copy(.2f))
-            .border(2.dp, Color.White, shape = RoundedCornerShape(30.dp))
+            .border(1.dp, Color.White, shape = RoundedCornerShape(30.dp))
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(item)
-            Text(item)
-            Text(item)
+            items.forEach { item ->
+                Text(item)
+            }
+
         }
     }
 }

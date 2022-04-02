@@ -26,6 +26,7 @@ import com.example.weatherapp.ui.main.MainViewModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -148,7 +149,7 @@ fun WeatherScreen() {
                        CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[0].dt, "hh:mm"))
-                        Text(state[0].hourly[0].temp)
+                        Text(state[0].hourly[0].temp.roundToInt().toString())
                     }
 
                 }
@@ -157,7 +158,7 @@ fun WeatherScreen() {
                         CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[1].dt, "hh:mm"))
-                        Text(state[0].hourly[1].temp)
+                        Text(state[0].hourly[1].temp.roundToInt().toString())
                     }
                 }
                 Column() {
@@ -165,7 +166,7 @@ fun WeatherScreen() {
                         CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[2].dt, "hh:mm"))
-                        Text(state[0].hourly[2].temp)
+                        Text(state[0].hourly[2].temp.roundToInt().toString())
                     }
                 }
                 Column() {
@@ -173,7 +174,7 @@ fun WeatherScreen() {
                         CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[3].dt, "dd/MM/yyyy hh:mm"))
-                        Text(state[0].hourly[3].temp)
+                        Text(state[0].hourly[3].temp.roundToInt().toString())
                     }
                 }
                 Column() {
@@ -181,7 +182,7 @@ fun WeatherScreen() {
                         CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[4].dt, "hh:mm"))
-                        Text(state[0].hourly[4].temp)
+                        Text(state[0].hourly[4].temp.roundToInt().toString())
                     }
                 }
                 Column() {
@@ -189,7 +190,7 @@ fun WeatherScreen() {
                         CircularProgressIndicator()
                     } else {
                         Text(getTime(state[0].hourly[5].dt.toLong(), "hh:mm"))
-                        Text(state[0].hourly[5].temp)
+                        Text(state[0].hourly[5].temp.roundToInt().toString())
                     }
                 }
             }
@@ -198,12 +199,11 @@ fun WeatherScreen() {
     }
 }
 
-
-
+@SuppressLint("SimpleDateFormat")
 fun getTime(milliSeconds: Long, dateFormat: String): String {
     val formatter: DateFormat = SimpleDateFormat(dateFormat)
-
+    val timeOffset = -10800
     val calendar = Calendar.getInstance()
-    calendar.timeInMillis = (milliSeconds + -18000) * 1000
+    calendar.timeInMillis = (milliSeconds + 10800) * 1000
     return formatter.format(calendar.time)
 }

@@ -31,6 +31,15 @@ interface WeatherApiInterface {
         @Query("appid") appid: String
     ): FullWeather
 
+    // api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
+    @GET("data/2.5/forecast/daily")
+    suspend fun getForecast(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("cnt") cnt: Int,
+        @Query("appid") appid: String,
+    )
+
     // http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid=76bb42ac7cb89fc255ba962c7916dd20
     @GET("geo/1.0/direct")
     suspend fun findCity(

@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.ui.screens.*
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
@@ -39,7 +40,7 @@ fun Navigation() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationScreens(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screens.FindCity.route) {
+    NavHost(navController = navController, startDestination = Screens.Weather.route) {
 
         composable(route = Screens.FindCity.route) {
             FindCityScreen(navController = navController)
