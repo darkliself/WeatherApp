@@ -43,5 +43,4 @@ class MainViewModel @Inject constructor(
 
         return weatherRepo.getHourlyWeather()
     }
-
 }

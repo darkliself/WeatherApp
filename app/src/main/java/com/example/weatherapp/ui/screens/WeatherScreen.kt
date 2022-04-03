@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.R
+import com.example.weatherapp.WeatherDateFormat
 import com.example.weatherapp.ui.main.MainViewModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -43,7 +44,7 @@ fun WeatherScreen() {
     if (state.isEmpty()) {
     } else {
         state[0].hourly.forEach{
-            time.add(getTime(it.dt, ""))
+            time.add(WeatherDateFormat.getTime(it.dt, dateFormat = "hh:mm"))
         }
     }
 
@@ -136,19 +137,14 @@ fun WeatherScreen() {
             ) {
                 Column(
                     Modifier.clickable {
-                        println(getTime(state[0].hourly[0].dt, ""))
-                        println(getTime(state[0].hourly[1].dt, ""))
-                        println(getTime(state[0].hourly[2].dt, ""))
-                        println(getTime(state[0].hourly[3].dt, ""))
-                        println(getTime(state[0].hourly[4].dt, ""))
-                        println(getTime(state[0].hourly[5].dt, ""))
+
                         println(time)
                     }
                 ) {
                     if(state.isEmpty()) {
                        CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[0].dt, "hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[0].dt, dateFormat = "hh:mm"))
                         Text(state[0].hourly[0].temp.roundToInt().toString())
                     }
 
@@ -157,7 +153,7 @@ fun WeatherScreen() {
                     if(state.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[1].dt, "hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[1].dt, dateFormat = "hh:mm"))
                         Text(state[0].hourly[1].temp.roundToInt().toString())
                     }
                 }
@@ -165,7 +161,7 @@ fun WeatherScreen() {
                     if(state.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[2].dt, "hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[2].dt, dateFormat = "hh:mm"))
                         Text(state[0].hourly[2].temp.roundToInt().toString())
                     }
                 }
@@ -173,7 +169,7 @@ fun WeatherScreen() {
                     if(state.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[3].dt, "dd/MM/yyyy hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[3].dt, dateFormat = "dd/MM/yyyy hh:mm"))
                         Text(state[0].hourly[3].temp.roundToInt().toString())
                     }
                 }
@@ -181,7 +177,7 @@ fun WeatherScreen() {
                     if(state.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[4].dt, "hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[4].dt, dateFormat = "hh:mm"))
                         Text(state[0].hourly[4].temp.roundToInt().toString())
                     }
                 }
@@ -189,7 +185,7 @@ fun WeatherScreen() {
                     if(state.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
-                        Text(getTime(state[0].hourly[5].dt.toLong(), "hh:mm"))
+                        Text(WeatherDateFormat.getTime(state[0].hourly[5].dt.toLong(), dateFormat = "hh:mm"))
                         Text(state[0].hourly[5].temp.roundToInt().toString())
                     }
                 }
@@ -197,13 +193,4 @@ fun WeatherScreen() {
         }
 
     }
-}
-
-@SuppressLint("SimpleDateFormat")
-fun getTime(milliSeconds: Long, dateFormat: String): String {
-    val formatter: DateFormat = SimpleDateFormat(dateFormat)
-    val timeOffset = -10800
-    val calendar = Calendar.getInstance()
-    calendar.timeInMillis = (milliSeconds + 10800) * 1000
-    return formatter.format(calendar.time)
 }

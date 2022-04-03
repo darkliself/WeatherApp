@@ -1,7 +1,7 @@
 package com.example.weatherapp.api.openweather
 
+import android.annotation.SuppressLint
 import com.example.weatherapp.data.model.FullWeather
-import com.example.weatherapp.data.model.Weather
 import com.example.weatherapp.data.model.city.CityItem
 import retrofit2.http.GET
 import retrofit2.http.Query
