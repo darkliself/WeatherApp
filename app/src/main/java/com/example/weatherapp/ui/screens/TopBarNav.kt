@@ -10,21 +10,24 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.Divider
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.weatherapp.R
@@ -33,11 +36,12 @@ import com.example.weatherapp.navigation.Screens
 
 @Composable
 fun TopBarNav(navController: NavController) {
+    val state = false
     var cityName by remember { mutableStateOf("") }
     Column(
         Modifier
             .fillMaxWidth()
-            .fillMaxHeight(.12f)
+            .fillMaxHeight(.15f)
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
@@ -54,7 +58,7 @@ fun TopBarNav(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("x")
-            FindCityTextField("")
+            FindCityTextField("kharkov")
             Text("x")
         }
 
@@ -131,23 +135,59 @@ fun CategoryCard(
             color = Color(0xFF868794),
             thickness = 2.dp,
         )
-
     }
 }
 
 @Composable
 fun FindCityTextField(
     value: String,
-
-    ) {
+) {
+    var state by remember { mutableStateOf(false) }
     var angel by remember { mutableStateOf(0f) }
     val animate by animateFloatAsState(targetValue = angel)
     var city by remember { mutableStateOf(value) }
-    TextField(city, onValueChange = { city = it }, trailingIcon = {
-
+    Box(
+        Modifier
+            .fillMaxWidth(0.8f)
+            .height(50.dp)
+//            .clip(shape = RoundedCornerShape(30.dp))
+//            .border(2.dp, Color(0xFF9B9EAD), shape = RoundedCornerShape(30.dp))
+    ) {
+        if (state) {
+            Text(
+                text = city,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .align(Alignment.Center),
+                textAlign = TextAlign.Center,
+                color = Color.Red,
+                fontSize = 14.sp
+            )
+        } else {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(50.dp)
+                    .align(Alignment.Center),
+                //.clip(shape = RoundedCornerShape(30.dp))
+                //.border(2.dp, Color(0xFF9B9EAD), shape = RoundedCornerShape(30.dp)),
+                value = city,
+                onValueChange = { city = it },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = Color.White
+                ),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                )
+            )
+        }
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow), null,
             modifier = Modifier
+                .align(Alignment.CenterEnd)
                 .rotate(animate)
                 .animateContentSize(
                     animationSpec = tween(
@@ -157,7 +197,9 @@ fun FindCityTextField(
                 )
                 .clickable {
                     angel += 180f
-                }
+                    state = !state
+                },
+            contentScale = ContentScale.Fit
         )
-    })
+    }
 }
