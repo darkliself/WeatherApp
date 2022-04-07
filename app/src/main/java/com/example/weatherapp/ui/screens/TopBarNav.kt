@@ -156,7 +156,7 @@ fun FindCityTextField(
                     )
                 )
                 .clickable {
-                    angel += 360f
+                    angel += 180f
                 }
         )
     })
