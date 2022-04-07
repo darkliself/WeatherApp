@@ -41,16 +41,16 @@ fun Navigation() {
 @Composable
 fun NavigationScreens(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.Weather.route) {
-
+        composable(route = Screens.MainScreen.route) {
+            MainScreen()
+        }
         composable(route = Screens.FindCity.route) {
             FindCityScreen(navController = navController)
         }
         composable(route = Screens.Weather.route) {
             WeatherScreen()
         }
-        composable(route = Screens.TodayScreen.route) {
-            TodayScreen()
-        }
+
         composable(route = Screens.ForecastScreen.route) {
             ForecastScreen()
         }

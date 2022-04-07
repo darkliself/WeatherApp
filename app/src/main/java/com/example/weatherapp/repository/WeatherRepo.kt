@@ -17,13 +17,10 @@ class WeatherRepo @Inject constructor(
         return weatherService.findCity(cityName, 5, Constants.API_KEY)
     }
 
-    suspend fun getCurrentWeather(): FullWeather {
-        return weatherService.getWeatherSome(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY)
-    }
-    suspend fun getHourlyWeather(): List<Hourly> {
+    suspend fun getHourlyWeather(): List<FullWeather.Hourly> {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY).hourly
     }
-    suspend fun getDailyWeather(): List<Daily> {
+    suspend fun getDailyWeather(): List<FullWeather.Daily> {
         return weatherService.getWeather(50.0, 36.25, units = Constants.UNITS, appid = Constants.API_KEY).daily
     }
 }

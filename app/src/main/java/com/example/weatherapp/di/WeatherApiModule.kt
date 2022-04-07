@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object WeatherApiModule {
-
     @Provides
     @Singleton
     fun provideApi(builder: Retrofit.Builder): WeatherApiInterface {
@@ -27,7 +26,6 @@ object WeatherApiModule {
             .addConverterFactory(GsonConverterFactory.create())
     }
 }
-
 
 object Constants {
     const val BASE_URL = "https://api.openweathermap.org/"// data/2.5/

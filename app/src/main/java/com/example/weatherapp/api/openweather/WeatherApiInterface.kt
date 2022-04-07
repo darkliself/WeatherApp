@@ -20,17 +20,6 @@ interface WeatherApiInterface {
         @Query("appid") appid: String
     ): FullWeather
 
-    @GET("data/2.5/onecall")
-    suspend fun getWeatherSome(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
-        // metric|imperial|standard
-        @Query("units") units: String,
-        // values minutely|hourly|daily|current|alerts
-        // @Query("exclude") exclude: String = "",
-        @Query("appid") appid: String
-    ): FullWeather
-
     // api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
     @GET("data/2.5/forecast/daily")
     suspend fun getForecast(

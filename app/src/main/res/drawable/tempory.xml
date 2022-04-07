@@ -1,0 +1,22 @@
+<!-- sun (1) 1 -->
+
+
+    <!-- drawable/sun_1_1.xml -->
+<vector
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:aapt="http://schemas.android.com/aapt"
+android:width="421dp"
+android:height="422dp"
+android:viewportWidth="421"
+android:viewportHeight="422"
+    >
+
+<group>
+
+    <clip-path
+        android:pathData="M0 0H421V422H0V0Z"
+        />
+
+</group>
+
+</vector>

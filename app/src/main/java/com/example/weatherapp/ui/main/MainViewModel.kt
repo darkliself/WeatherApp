@@ -35,11 +35,7 @@ class MainViewModel @Inject constructor(
             return weatherRepo.findCity(cityName)
     }
 
-    suspend fun getCurrent(): List<FullWeather> {
-        tests.value = listOf(weatherRepo.getCurrentWeather())
-        return _tests.value
-    }
-    suspend fun getCurrent2(): List<Hourly> {
+    suspend fun getCurrent2(): List<FullWeather.Hourly> {
 
         return weatherRepo.getHourlyWeather()
     }

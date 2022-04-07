@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -33,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
-import com.example.weatherapp.data.model.Current
-import com.example.weatherapp.data.model.Daily
-import com.example.weatherapp.data.model.Hourly
+
+import com.example.weatherapp.data.model.FullWeather
+
 import com.example.weatherapp.ui.main.MainViewModel
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
@@ -44,15 +43,15 @@ import kotlin.properties.Delegates
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun TodayScreen() {
-    lateinit var current: Current
-    lateinit var daily: List<Daily>
-    lateinit var hourly: List<Hourly>
+fun MainScreen() {
+    lateinit var current: FullWeather.Current
+    lateinit var daily: List<FullWeather.Daily>
+    lateinit var hourly: List<FullWeather.Hourly>
     var timeOffset by Delegates.notNull<Int>()
     val scope = rememberCoroutineScope()
     val homeViewModel = hiltViewModel<MainViewModel>()
     val fullWeather by homeViewModel.state.collectAsState()
-    val dayOfTheWeek = WeatherDateFormat.getDayOfTheWeek()
+    val dayOfTheWeek = WeatherDateFormat.getWeekDay()
     val day = WeatherDateFormat.getDayOfTheMonth()
     val month = WeatherDateFormat.getMouth()
 
@@ -111,15 +110,16 @@ fun TodayScreen() {
                         Modifier
                             .fillMaxHeight(.3f)
                             .fillMaxWidth(),
-                        // .border(2.dp, Color.Black),
-                        verticalAlignment = Alignment.Bottom,
+                        verticalAlignment = Alignment.Top,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Image(
-                            modifier = Modifier.wrapContentSize(),
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_sun),
+                            modifier = Modifier
+                                .fillMaxWidth(.35f)
+                                .fillMaxHeight(),
+                            imageVector = ImageVector.vectorResource(current.getIcon()),
                             contentDescription = null,
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                         )
                         Column(
                             Modifier.clickable {
@@ -128,7 +128,7 @@ fun TodayScreen() {
                         ) {
                             Text(
                                 "${current.temp.roundToInt()}°C",
-                                fontSize = 70.sp,
+                                fontSize = 90.sp,
                                 color = Color(0xFFA2A4B5)
                             )
                             Text(
@@ -141,26 +141,46 @@ fun TodayScreen() {
                     }
                 }
 
-                Column() {
-                    Row(
+                Column(
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Box(
                         Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .border(2.dp, Color.Red),
-                        horizontalArrangement = Arrangement.SpaceAround
+                            .fillMaxWidth(0.9f)
+                            .height(40.dp),
                     ) {
                         WeatherInfoWidget(
+                            Modifier
+                                .align(alignment = Alignment.CenterStart)
+                                .fillMaxWidth(0.6f)
+                                .padding(start = 30.dp),
                             listOf(
                                 "${daily[0].temp.max.roundToInt()}°/${daily[0].temp.min.roundToInt()}° Feels like ",
                                 "${current.feelsLike.roundToInt()}°C"
                             )
                         )
-                        WeatherInfoWidget(listOf("Wind ", "${current.windSpeed}m/s ", "WSW"))
+                        WeatherInfoWidget(
+                            Modifier
+                                .align(alignment = Alignment.CenterEnd)
+                                .fillMaxWidth(0.4f),
+                            listOf("Wind ", "${current.windSpeed}m/s "),
+                            windDirection = current.windDeg
+                        )
+                        Image(
+                            modifier = Modifier
+                                .rotate(current.windDeg.toFloat())
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 20.dp),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit
+                        )
                     }
                     Image(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
-                            .align(Alignment.CenterHorizontally),
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 20.dp),
                         imageVector = ImageVector.vectorResource(id = R.drawable.divider),
                         contentDescription = null
                     )
@@ -170,8 +190,7 @@ fun TodayScreen() {
                     Modifier
                         .fillMaxWidth(0.9f)
                         .height(70.dp)
-                        .padding(top = 20.dp)
-                        .border(2.dp, Color.Black),
+                        .padding(top = 20.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Box(
@@ -180,6 +199,9 @@ fun TodayScreen() {
                             .fillMaxHeight()
                     ) {
                         WeatherInfoWidget(
+                            Modifier
+                                .align(Alignment.TopStart)
+                                .padding(start = 30.dp),
                             listOf(
                                 "Sunrise: ",
                                 WeatherDateFormat.getTime(
@@ -187,12 +209,13 @@ fun TodayScreen() {
                                     timeOffset = timeOffset,
                                     dateFormat = "hh:mm"
                                 )
-                            ),
-                            Modifier.align(Alignment.TopStart)
+                            )
                         )
                         WeatherInfoWidget(
-                            listOf("Humidity: ", "${daily[0].humidity}%"),
-                            Modifier.align(Alignment.BottomStart)
+                            Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(start = 30.dp),
+                            listOf("Humidity: ", "${daily[0].humidity}%")
                         )
                     }
                     Box(
@@ -201,8 +224,13 @@ fun TodayScreen() {
                             .fillMaxHeight()
                             .align(Alignment.TopEnd)
                     ) {
-                        WeatherInfoWidget(listOf("Wind: ", "${current.windSpeed} m/s"), Modifier.align(Alignment.TopStart))
                         WeatherInfoWidget(
+                            Modifier.align(Alignment.TopStart),
+                            listOf("Wind: ", "${current.windSpeed} m/s")
+
+                        )
+                        WeatherInfoWidget(
+                            Modifier.align(Alignment.BottomStart),
                             listOf(
                                 "Sunset: ",
                                 WeatherDateFormat.getTime(
@@ -210,46 +238,24 @@ fun TodayScreen() {
                                     timeOffset = timeOffset,
                                     dateFormat = "hh:mm"
                                 )
-                            ),
-                            Modifier.align(Alignment.BottomStart)
+                            )
                         )
                     }
                 }
-
-//                Row(
-//                    Modifier
-//                        .fillMaxWidth()
-//                        .height(40.dp)
-//                        .padding(10.dp),
-//                    horizontalArrangement = Arrangement.SpaceAround
-//                ) {
-//                    WeatherInfoWidget(listOf("Wind: ", "${current.windSpeed} m/s"))
-//                    WeatherInfoWidget(
-//                        listOf(
-//                            "Sunset: ",
-//                            WeatherDateFormat.getTime(
-//                                seconds = current.sunset,
-//                                timeOffset = timeOffset,
-//                                dateFormat = "hh:mm"
-//                            )
-//                        )
-//                    )
-//                }
 
                 LazyRow(
                     contentPadding = PaddingValues(5.dp)
                 ) {
                     items(hourly.count() - 1) { index ->
                         WeatherHourlyItem(
-                            listOf(
-                                WeatherDateFormat.getTime(
-                                    seconds = hourly[index + 1].dt,
-                                    timeOffset = timeOffset,
-                                    dateFormat = "hh:mm"
-                                ),
-                                hourly[index + 1].weather[0].icon,
-                                "${hourly[index + 1].temp.roundToInt()}°C"
-                            )
+                            WeatherDateFormat.getTime(
+                                seconds = hourly[index + 1].dt,
+                                timeOffset = timeOffset,
+                                dateFormat = "hh:mm"
+                            ),
+                            hourly[index + 1].getIcon(),
+                            "${hourly[index + 1].temp.roundToInt()}"
+
                         )
                     }
                 }
@@ -261,7 +267,6 @@ fun TodayScreen() {
                         .fillMaxWidth(0.98f)
                         .padding(top = 30.dp)
                         .clip(shape = RoundedCornerShape(15.dp))
-
                         .background(
                             brush = Brush.linearGradient(
                                 colors = listOf(
@@ -288,13 +293,11 @@ fun TodayScreen() {
                         }
                         repeat(daily.size - 1) {
                             DailyWidget(
-                                DailyItem(
-                                    WeatherDateFormat.getDayOfTheWeek(daily[it + 1].dt).toString(),
-                                    daily[it + 1].weather[0].icon,
-                                    "${daily[it + 1].temp.max.roundToInt()}°",
-                                    "${daily[it + 1].temp.min.roundToInt()}°",
-                                )
-
+                                weekDay = WeatherDateFormat.getWeekDay(daily[it + 1].dt)
+                                    .toString(),
+                                icon = daily[it + 1].getIcon(),
+                                max = "${daily[it + 1].temp.max.roundToInt()}°",
+                                min = "${daily[it + 1].temp.min.roundToInt()}°",
                             )
                         }
                     }
@@ -306,8 +309,10 @@ fun TodayScreen() {
 
 
 @Composable
-fun WeatherHourlyItem(
-    items: List<String>,
+private fun WeatherHourlyItem(
+    time: String,
+    icon: Int,
+    temp: String,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -316,31 +321,32 @@ fun WeatherHourlyItem(
             .height(140.dp)
             .padding(5.dp)
             .clip(shape = RoundedCornerShape(30.dp))
-            .background(Color(0xFFFFFFFF).copy(.2f))
-            .border(1.dp, Color.White, shape = RoundedCornerShape(30.dp))
+            .background(Color(0x1A000000))
+        //.border(1.dp, Color.White, shape = RoundedCornerShape(30.dp))
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items.forEach { item ->
-                Text(item)
-            }
-
+            Text(time)
+            Image(
+                imageVector = ImageVector.vectorResource(icon),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(0.9f)
+            )
+            Text("$temp°C")
         }
     }
 }
 
-data class DailyItem(
-    val day: String,
-    val icon: String,
-    val max: String,
-    val min: String,
-)
-
 @Composable
-fun DailyWidget(dailyItem: DailyItem) {
+private fun DailyWidget(
+    weekDay: String,
+    icon: Int,
+    max: String,
+    min: String
+) {
     Row(
         Modifier
             .padding(bottom = 10.dp)
@@ -352,28 +358,77 @@ fun DailyWidget(dailyItem: DailyItem) {
                 .fillMaxWidth(0.4f)
                 .padding(start = 20.dp)
         ) {
-            Text(dailyItem.day, Modifier.align(Alignment.CenterStart))
-            Text(dailyItem.icon, Modifier.align(Alignment.CenterEnd))
+            Text(weekDay, Modifier.align(Alignment.CenterStart))
+            Image(
+                imageVector = ImageVector.vectorResource(id = icon),
+                contentDescription = null,
+                Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxWidth(0.2f)
+                    .fillMaxHeight(.2f),
+                contentScale = ContentScale.Fit
+            )
         }
         Box(
             Modifier
                 .fillMaxWidth(0.5f)
                 .padding(start = 5.dp, end = 35.dp)
         ) {
-            Text(dailyItem.max, Modifier.align(Alignment.CenterStart))
-            Text(dailyItem.min, Modifier.align(Alignment.CenterEnd))
+            Text(max, Modifier.align(Alignment.CenterStart))
+            Text(min, Modifier.align(Alignment.CenterEnd))
         }
     }
 }
 
 @Composable
-fun WeatherInfoWidget(items: List<String>, modifier: Modifier = Modifier) {
+private fun WeatherInfoWidget(
+    modifier: Modifier = Modifier,
+    items: List<String>,
+    windDirection: Int? = null
+) {
     Row(modifier = modifier) {
         items.forEachIndexed { index, s ->
             val textColor = if (index % 2 == 0) Color(0xFF9B9EAD) else Color.White
             Text(text = s, color = textColor)
         }
+        if (windDirection != null) {
+
+        }
     }
 }
+
+
+private fun FullWeather.Daily.getIcon(): Int {
+    return getIconId(weather.first().icon)
+}
+
+private fun FullWeather.Current.getIcon(): Int {
+    return getIconId(weather.first().icon)
+}
+
+private fun FullWeather.Hourly.getIcon(): Int {
+    return getIconId(weather.first().icon)
+}
+
+private fun getIconId(str: String): Int {
+    return when (str) {
+        "01d" -> R.drawable.ic_01d
+        "01n" -> R.drawable.ic_01n
+        "02d" -> R.drawable.ic_02d
+        "02n" -> R.drawable.ic_02n
+        "03d" -> R.drawable.ic_03d
+        "03n" -> R.drawable.ic_03n
+        "04d" -> R.drawable.ic_03d
+        "04n" -> R.drawable.ic_03n
+        "09d" -> R.drawable.ic_09d
+        "09n" -> R.drawable.ic_09n
+        "10d" -> R.drawable.ic_10d
+        "10n" -> R.drawable.ic_10n
+        "11d" -> R.drawable.ic_11d
+        "11n" -> R.drawable.ic_11n
+        else -> R.drawable.cloud
+    }
+}
+
 
 

@@ -20,7 +20,7 @@ object WeatherDateFormat {
         return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US)
     }
 
-    fun getDayOfTheWeek(seconds: Long = Date().time / 1000, timeZone: Long = 0L): String? {
+    fun getWeekDay(seconds: Long = Date().time / 1000, timeZone: Long = 0L): String? {
         calendar.time = Date((seconds - timeZone) * 1000)
         return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)
     }
