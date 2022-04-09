@@ -16,7 +16,6 @@ object WeatherApiModule {
     @Singleton
     fun provideApi(builder: Retrofit.Builder): WeatherApiInterface {
         return builder.build().create(WeatherApiInterface::class.java)
-
     }
     @Provides
     @Singleton

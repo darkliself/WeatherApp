@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/1/.gradle/caches/transforms-3/236be9e0e11b83579f19d84018577853/transformed/core-1.7.0/res/drawable/notification_icon_background.xml" value="0.1105" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud_sun.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.116" />

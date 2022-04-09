@@ -71,5 +71,6 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation"com.squareup.moshi:moshi:1.11.0"
     kapt"com.squareup.moshi:moshi-kotlin-codegen:1.11.0"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
 }

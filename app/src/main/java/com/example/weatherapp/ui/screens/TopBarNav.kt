@@ -32,6 +32,8 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.weatherapp.R
 import com.example.weatherapp.navigation.Screens
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -41,6 +43,8 @@ fun TopBarNav(navController: NavController) {
     Column(
         Modifier
             .fillMaxWidth()
+            //.height(150.dp)
+            //.wrapContentHeight()
             .fillMaxHeight(.15f)
             .background(
                 brush = Brush.linearGradient(
@@ -58,19 +62,18 @@ fun TopBarNav(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("x")
-            FindCityTextField("kharkov")
+            FindCityTextField("kharkov", navController)
             Text("x")
         }
 
         Row(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
+                // .fillMaxHeight()
         ) {
             Box(
                 Modifier.fillMaxSize()// .background(color = Color.Cyan)
             ) {
-
                 CategoryCard(
                     text = "Today",
                     modifier = Modifier.align(Alignment.CenterStart),
@@ -88,10 +91,10 @@ fun TopBarNav(navController: NavController) {
                 )
 
                 CategoryCard(
-                    text = "Precipitation",
+                    text = "FindCity",
                     modifier = Modifier.align(Alignment.CenterEnd),
                     onClick = {
-                        navController.navigate(Screens.PrecipitationScreen.route)
+                        navController.navigate(Screens.NewFindCityScreen.route)
                     }
                 )
             }
@@ -109,7 +112,7 @@ fun CategoryCard(
     Box(
         modifier = modifier
             .fillMaxWidth(0.334f)
-            .fillMaxHeight()
+            //.fillMaxHeight()
             .clickable {
                 onClick()
             },
@@ -141,7 +144,9 @@ fun CategoryCard(
 @Composable
 fun FindCityTextField(
     value: String,
+    navController: NavController
 ) {
+    val scope = rememberCoroutineScope()
     var state by remember { mutableStateOf(false) }
     var angel by remember { mutableStateOf(0f) }
     val animate by animateFloatAsState(targetValue = angel)
@@ -198,6 +203,11 @@ fun FindCityTextField(
                 .clickable {
                     angel += 180f
                     state = !state
+                    scope.launch {
+                        delay(400L)
+                    }
+
+                    navController.navigate(Screens.FindCity.route)
                 },
             contentScale = ContentScale.Fit
         )

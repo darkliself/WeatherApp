@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +35,8 @@ import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
 
 import com.example.weatherapp.data.model.FullWeather
+import com.example.weatherapp.di.DataStoreModule
+import com.example.weatherapp.repository.DataStoreRepo
 
 import com.example.weatherapp.ui.main.MainViewModel
 import kotlin.math.roundToInt
@@ -44,6 +47,7 @@ import kotlin.properties.Delegates
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen() {
+    val dataStore = DataStoreRepo(DataStoreModule.providePreferenceDataStore(LocalContext.current))
     lateinit var current: FullWeather.Current
     lateinit var daily: List<FullWeather.Daily>
     lateinit var hourly: List<FullWeather.Hourly>

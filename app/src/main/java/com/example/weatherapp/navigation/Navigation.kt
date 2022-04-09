@@ -57,6 +57,9 @@ fun NavigationScreens(navController: NavHostController) {
         composable(route = Screens.PrecipitationScreen.route) {
             PrecipitationScreen()
         }
+        composable(route = Screens.NewFindCityScreen.route) {
+            NewFindCityScreen()
+        }
 
     }
 }
