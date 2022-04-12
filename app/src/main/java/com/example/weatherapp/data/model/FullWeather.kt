@@ -11,7 +11,7 @@ data class FullWeather(
     @SerializedName("hourly")
     val hourly: List<Hourly>,
     @SerializedName("lat")
-    val lat: Int,
+    val lat: Double,
     @SerializedName("lon")
     val lon: Double,
     @SerializedName("timezone")

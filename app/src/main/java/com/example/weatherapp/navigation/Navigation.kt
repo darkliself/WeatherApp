@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.weatherapp.ui.search.NewFindCityScreen
 import com.example.weatherapp.ui.screens.*
 
 
@@ -25,9 +26,9 @@ fun Navigation() {
     Scaffold(
 
         scaffoldState = scaffoldState,
-        topBar = {
-            TopBarNav(navController)
-        },
+//        topBar = {
+//            TopBarNav(navController)
+//        },
         drawerContent = { Text(text = "drawerContent") },
         content = {
             NavigationScreens(navController)
@@ -40,9 +41,9 @@ fun Navigation() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationScreens(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screens.Weather.route) {
+    NavHost(navController = navController, startDestination = Screens.MainScreen.route) {
         composable(route = Screens.MainScreen.route) {
-            MainScreen()
+            MainScreen(navController = navController)
         }
         composable(route = Screens.FindCity.route) {
             FindCityScreen(navController = navController)
@@ -58,7 +59,7 @@ fun NavigationScreens(navController: NavHostController) {
             PrecipitationScreen()
         }
         composable(route = Screens.NewFindCityScreen.route) {
-            NewFindCityScreen()
+            NewFindCityScreen(navController = navController)
         }
 
     }

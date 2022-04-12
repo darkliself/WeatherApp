@@ -11,8 +11,8 @@ interface WeatherApiInterface {
     @GET("data/2.5/onecall")
     // 50.0, 36.25, units = Constans.UNITS, appid = Constans.API_KEY
     suspend fun getWeather(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         // metric|imperial|standard
         @Query("units") units: String,
         // values minutely|hourly|daily|current|alerts

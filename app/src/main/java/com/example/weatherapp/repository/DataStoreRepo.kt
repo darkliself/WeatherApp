@@ -1,89 +1,46 @@
 package com.example.weatherapp.repository
 
 import android.content.Context
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.weatherapp.api.openweather.WeatherApiInterface
-import com.example.weatherapp.di.DataStoreModule
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import javax.inject.Singleton
 
+private val Context.dataStore by preferencesDataStore("city")
 
 class DataStoreRepo @Inject constructor(
-    private val dataStoreModule: DataStore<Preferences>,
-    // private val context: Context
+    @ApplicationContext val context: Context
 ) {
-//    @Singleton
-//    private val dataStore = dataStoreModule.data.providePreferenceDataStore(context)
+    private val dataStore = context.dataStore
 
-
-    suspend fun save(key: String, value: String) {
-        dataStoreModule.edit {
-            it[stringPreferencesKey(key)] = value
-        }
-    }
-
-    suspend fun delete(key: String) {
-        dataStoreModule.edit {
-            it.remove(stringPreferencesKey(key))
-        }
-    }
-
-    suspend fun deleteAll() {
-        dataStoreModule.edit {
-            it.clear()
+    suspend fun save(value: String, lat: Double, lon: Double, state: String, country: String) {
+        dataStore.edit {
+            it[stringPreferencesKey("city")] = value
+            it[stringPreferencesKey("lat")] = lat.toString()
+            it[stringPreferencesKey("lon")] = lon.toString()
+            it[stringPreferencesKey("state")] = lon.toString()
+            it[stringPreferencesKey("country")] = lon.toString()
         }
     }
 
     suspend fun readAll(): Map<Preferences.Key<*>, Any> {
-        return dataStoreModule.data.first().asMap()
+        return dataStore.data.first().asMap()
+    }
+    suspend fun getCityName(): String? {
+        return dataStore.data.first()[stringPreferencesKey("city")]
+    }
+    suspend fun getLat(): String? {
+        return dataStore.data.first()[stringPreferencesKey("lat")]
+    }
+
+    suspend fun getLon(): String? {
+        return dataStore.data.first()[stringPreferencesKey("lon")]
     }
 
     suspend fun count(): Int {
-        return dataStoreModule.data.first().asMap().count()
+        return dataStore.data.first().asMap().count()
     }
 }
-
-
-//@Singleton
-//class DataStoreRepo(context: Context) {
-//    private val _context = context
-//    // private val Context.dataStore by preferencesDataStore(name = "nickname")
-//    private val Context.dataStore by preferencesDataStore(name = "nickname")
-//
-////    companion object SingletonRepo {
-////
-////    }
-//
-//    suspend fun save(key: String, value: String) {
-//        _context.dataStore.edit {
-//            it[stringPreferencesKey(key)] = value
-//        }
-//    }
-//
-//    suspend fun delete(key: String) {
-//        _context.dataStore.edit {
-//            it.remove(stringPreferencesKey(key))
-//        }
-//    }
-//
-//    suspend fun deleteAll() {
-//        _context.dataStore.edit {
-//            it.clear()
-//        }
-//    }
-//
-//    suspend fun readAll(): Map<Preferences.Key<*>, Any> {
-//        return _context.dataStore.data.first().asMap()
-//    }
-//
-//    suspend fun count(): Int {
-//        return _context.dataStore.data.first().asMap().count()
-//    }
-//
-//}

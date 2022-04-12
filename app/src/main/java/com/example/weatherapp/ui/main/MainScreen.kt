@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,10 +17,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,17 +30,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
 
 import com.example.weatherapp.data.model.FullWeather
-import com.example.weatherapp.di.DataStoreModule
+import com.example.weatherapp.navigation.Screens
 import com.example.weatherapp.repository.DataStoreRepo
 
 import com.example.weatherapp.ui.main.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -46,8 +53,9 @@ import kotlin.properties.Delegates
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun MainScreen() {
-    val dataStore = DataStoreRepo(DataStoreModule.providePreferenceDataStore(LocalContext.current))
+fun MainScreen(navController: NavController) {
+    val dataStore = DataStoreRepo(LocalContext.current)
+
     lateinit var current: FullWeather.Current
     lateinit var daily: List<FullWeather.Daily>
     lateinit var hourly: List<FullWeather.Hourly>
@@ -55,6 +63,7 @@ fun MainScreen() {
     val scope = rememberCoroutineScope()
     val homeViewModel = hiltViewModel<MainViewModel>()
     val fullWeather by homeViewModel.state.collectAsState()
+    val cityName by homeViewModel.name.collectAsState()
     val dayOfTheWeek = WeatherDateFormat.getWeekDay()
     val day = WeatherDateFormat.getDayOfTheMonth()
     val month = WeatherDateFormat.getMouth()
@@ -80,11 +89,25 @@ fun MainScreen() {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         if (fullWeather.isEmpty()) {
             item {
                 CircularProgressIndicator(modifier = Modifier.fillMaxSize())
             }
         } else {
+
+            item() {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("x")
+                    FindCityTextField(value = cityName, navController = navController)
+                    Text("x")
+                }
+            }
             item() {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -114,16 +137,16 @@ fun MainScreen() {
                         Modifier
                             .fillMaxHeight(.3f)
                             .fillMaxWidth(),
-                        verticalAlignment = Alignment.Top,
+                        verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Image(
                             modifier = Modifier
-                                .fillMaxWidth(.35f)
+                                .fillMaxWidth(.3f)
                                 .fillMaxHeight(),
                             imageVector = ImageVector.vectorResource(current.getIcon()),
                             contentDescription = null,
-                            contentScale = ContentScale.Fit,
+                            contentScale = ContentScale.FillBounds,
                         )
                         Column(
                             Modifier.clickable {
@@ -168,7 +191,7 @@ fun MainScreen() {
                                 .align(alignment = Alignment.CenterEnd)
                                 .fillMaxWidth(0.4f),
                             listOf("Wind ", "${current.windSpeed}m/s "),
-                            windDirection = current.windDeg
+                            // windDirection = current.windDeg
                         )
                         Image(
                             modifier = Modifier
@@ -388,19 +411,14 @@ private fun DailyWidget(
 private fun WeatherInfoWidget(
     modifier: Modifier = Modifier,
     items: List<String>,
-    windDirection: Int? = null
 ) {
     Row(modifier = modifier) {
         items.forEachIndexed { index, s ->
             val textColor = if (index % 2 == 0) Color(0xFF9B9EAD) else Color.White
             Text(text = s, color = textColor)
         }
-        if (windDirection != null) {
-
-        }
     }
 }
-
 
 private fun FullWeather.Daily.getIcon(): Int {
     return getIconId(weather.first().icon)
@@ -422,8 +440,8 @@ private fun getIconId(str: String): Int {
         "02n" -> R.drawable.ic_02n
         "03d" -> R.drawable.ic_03d
         "03n" -> R.drawable.ic_03n
-        "04d" -> R.drawable.ic_03d
-        "04n" -> R.drawable.ic_03n
+        "04d" -> R.drawable.ic_04d
+        "04n" -> R.drawable.ic_04n
         "09d" -> R.drawable.ic_09d
         "09n" -> R.drawable.ic_09n
         "10d" -> R.drawable.ic_10d
@@ -431,6 +449,62 @@ private fun getIconId(str: String): Int {
         "11d" -> R.drawable.ic_11d
         "11n" -> R.drawable.ic_11n
         else -> R.drawable.cloud
+    }
+}
+
+@Composable
+fun Header(navController: NavController) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text("x")
+        Text("Kharkov")
+        Text("x")
+    }
+}
+
+
+@Composable
+fun FindCityTextField(
+    value: String,
+    navController: NavController? = null
+) {
+    val scope = rememberCoroutineScope()
+    var state by remember { mutableStateOf(false) }
+    var angel by remember { mutableStateOf(0f) }
+    val animate by animateFloatAsState(targetValue = angel)
+    var city by remember { mutableStateOf(value) }
+    Box(
+        Modifier
+            .fillMaxWidth(0.8f)
+            .height(50.dp)
+    ) {
+            Text(
+                text = city,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .align(Alignment.Center),
+                textAlign = TextAlign.Center,
+                color = Color.Red,
+                fontSize = 14.sp
+            )
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow), null,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable {
+                    scope.launch {
+                        delay(400L)
+                        navController!!.navigate(Screens.NewFindCityScreen.route)
+                    }
+
+                    // navController.navigate(Screens.FindCity.route)
+                },
+            contentScale = ContentScale.Fit
+        )
     }
 }
 

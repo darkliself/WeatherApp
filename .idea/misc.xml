@@ -7,12 +7,15 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud_sun.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/find_city_background.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_01d.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_01n.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_02d.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_02n.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_03d.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_03d_back.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_03n.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_03n_back.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_04d.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_04n.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_09d.xml" value="0.116" />
@@ -23,11 +26,15 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_11n.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic__1d_a.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_arrow.xml" value="0.1105" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_ccccc.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloud_computing__1___1_.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_globe_map.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_rainy__2_.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_tempory.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_thunder.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_world.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/img_background.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/tempory.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/tes1.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/test.xml" value="0.116" />
