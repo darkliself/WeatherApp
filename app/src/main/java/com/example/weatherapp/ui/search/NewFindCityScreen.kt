@@ -6,21 +6,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,18 +43,21 @@ import com.example.weatherapp.ui.main.MainViewModel
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun NewFindCityScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
     // var cityViewModel = hiltViewModel<FindCityViewModel>()
     val dataStore = DataStoreRepo(LocalContext.current)
-    var cityName by remember { mutableStateOf("") }
+    var cityName by remember { mutableStateOf(emptyList<String>()) }
     scope.launch {
-        cityName = dataStore.getCityName() ?: ""
+        if (dataStore.count() > 0) {
+            cityName = dataStore.getCityInfo()
+        }
     }
 
-    // val dataStore = DataStoreRepo(DataStoreModule.providePreferenceDataStore(LocalContext.current))
     var textFieldVal by remember { mutableStateOf("") }
 
 
@@ -69,101 +81,146 @@ fun NewFindCityScreen(navController: NavController) {
                 )
             ),
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.img),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.4f)
+                .align(BiasAlignment(horizontalBias = 0f, verticalBias = 0.8f)),
+            contentScale = ContentScale.FillWidth
+        )
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextField(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(50.dp),
-                    //.align(Alignment.Center),
-                //.clip(shape = RoundedCornerShape(30.dp))
-                //.border(2.dp, Color(0xFF9B9EAD), shape = RoundedCornerShape(30.dp)),
-                value = textFieldVal,
-                onValueChange = { textFieldVal = it.replace("\r", "").replace("\n", "") },
-                textStyle = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    color = Color.White
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White,
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 20.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                Image(
+                    ImageVector.vectorResource(id = R.drawable.search),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(end = 10.dp)
+                        .clickable {
+
+                        },
+                    contentScale = ContentScale.Fit
                 )
-            )
-
-            Button(onClick = {
-                if (textFieldVal != "") {
-                    scope.launch {
-                        arr = homeViewModel.findCity(textFieldVal)
-                    }
-                }
-            }) {
-                Text("Find city")
-            }
-            Button(onClick = {
-                scope.launch {
-                    if (dataStore.count() == 0) {
-                        println("Its empty")
-                    } else {
-                        println(dataStore.getCityName())
-                        println(dataStore.count())
-                    }
-                }
-            }) {
-                Text(text = "Test dataStore")
-            }
-
-            CityItemComponent(
-                city = cityName,
-                onClick = { navController.navigate(Screens.MainScreen.route) })
-
-            if (arr.isNotEmpty()) {
-                arr.forEach {
-                    CityItemComponent(
-                        city = "${it.name} ${it.country ?: ""} ${it.state ?: ""}",
-                        onClick = {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(50.dp),
+                    value = textFieldVal,
+                    onValueChange = { textFieldVal = it.replace("\r", "").replace("\n", "") },
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Center,
+                        fontSize = 14.sp,
+                        color = Color.White
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.White,
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (textFieldVal != "") {
                             scope.launch {
-                                // city.saveCityName(it.name)
-                                dataStore.save(
-                                    it.name,
-                                    it.lat,
-                                    it.lon,
-                                    it.state ?: "",
-                                    it.country ?: ""
-                                )
-                                navController.navigate(Screens.MainScreen.route)
+                                arr = homeViewModel.findCity(textFieldVal)
+                                keyboardController?.hide()
                             }
                         }
-                    )
+                    }),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
+                Image(
+                    ImageVector.vectorResource(id = R.drawable.search),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(start = 10.dp)
+                        .clickable {
+                            scope.launch {
+                                if (textFieldVal != "") {
+                                    arr = homeViewModel.findCity(textFieldVal)
+                                    if (arr.any()) {
+                                        keyboardController?.hide()
+                                    }
+                                }
+                            }
+                        },
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            if (cityName.isNotEmpty()) {
+                Text("Current place", modifier = Modifier.padding(bottom = 10.dp))
+                CityItemComponent(
+                    city = "${cityName.first()}, ${cityName.drop(1).take(2).joinToString(" ")}",
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    onClick = { navController.navigate(Screens.MainScreen.route) }
+                )
+            }
+
+            if (arr.isNotEmpty()) {
+                Text("Search result", modifier = Modifier.padding(bottom = 10.dp))
+                LazyColumn(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    arr.forEach {
+                        item() {
+                            CityItemComponent(
+                                city = "${it.name}, ${it.country ?: ""} ${it.state ?: ""}",
+                                modifier = Modifier.padding(bottom = 20.dp),
+                                onClick = {
+                                    scope.launch {
+                                        dataStore.save(
+                                            name = it.name,
+                                            lat = it.lat,
+                                            lon = it.lon,
+                                            state = it.state ?: "",
+                                            country = it.country ?: ""
+                                        )
+                                        navController.navigate(Screens.MainScreen.route)
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun CityItemComponent(
+private fun CityItemComponent(
     city: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(0.9f)
             .height(50.dp)
             .clip(shape = RoundedCornerShape(30.dp))
             .border(2.dp, Color.Gray.copy(0.5f), shape = RoundedCornerShape(30.dp))
-            .clickable {
-                onClick()
-            }
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color(0xFF6972AF),
+                        Color(0xFF171C47).copy(0.8f)
+                    )
+                )
+            )
+            .clickable { onClick() }
     ) {
-        Text(city)
-        Image(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            imageVector = ImageVector.vectorResource(R.drawable.cloud_sun),
-            contentDescription = null
-        )
+        Text(city, textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.Center))
     }
 }

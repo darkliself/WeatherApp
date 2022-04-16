@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +15,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,12 +26,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
 
@@ -54,16 +51,13 @@ import kotlin.properties.Delegates
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController) {
-    val dataStore = DataStoreRepo(LocalContext.current)
-
     lateinit var current: FullWeather.Current
     lateinit var daily: List<FullWeather.Daily>
     lateinit var hourly: List<FullWeather.Hourly>
     var timeOffset by Delegates.notNull<Int>()
-    val scope = rememberCoroutineScope()
     val homeViewModel = hiltViewModel<MainViewModel>()
     val fullWeather by homeViewModel.state.collectAsState()
-    val cityName by homeViewModel.name.collectAsState()
+    val cityInfo by homeViewModel.info.collectAsState()
     val dayOfTheWeek = WeatherDateFormat.getWeekDay()
     val day = WeatherDateFormat.getDayOfTheMonth()
     val month = WeatherDateFormat.getMouth()
@@ -100,12 +94,24 @@ fun MainScreen(navController: NavController) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(top = 30.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Text("x")
-                    FindCityTextField(value = cityName, navController = navController)
-                    Text("x")
+                    Text(
+                        text = "${cityInfo.first()}, ${cityInfo.drop(1).joinToString(" ")}",
+                        modifier = Modifier,
+                    )
+                    Image(
+                        ImageVector.vectorResource(id = R.drawable.search),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                navController.navigate(Screens.NewFindCityScreen.route)
+                            },
+                        contentScale = ContentScale.Fit
+                    )
                 }
             }
             item() {
@@ -122,7 +128,6 @@ fun MainScreen(navController: NavController) {
                             .background(Color(0xFF32333E))
 
                     ) {
-
                         Text(
                             text = "$dayOfTheWeek, $day $month",
                             modifier = Modifier.padding(10.dp),
@@ -146,7 +151,7 @@ fun MainScreen(navController: NavController) {
                                 .fillMaxHeight(),
                             imageVector = ImageVector.vectorResource(current.getIcon()),
                             contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
+                            contentScale = ContentScale.Fit,
                         )
                         Column(
                             Modifier.clickable {
@@ -162,7 +167,8 @@ fun MainScreen(navController: NavController) {
                                 current.weather[0].description.replaceFirstChar {
                                     it.titlecase()
                                 },
-                                fontSize = 15.sp
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
@@ -173,7 +179,7 @@ fun MainScreen(navController: NavController) {
                 ) {
                     Box(
                         Modifier
-                            .fillMaxWidth(0.9f)
+                            .fillMaxWidth(0.95f)
                             .height(40.dp),
                     ) {
                         WeatherInfoWidget(
@@ -197,7 +203,7 @@ fun MainScreen(navController: NavController) {
                             modifier = Modifier
                                 .rotate(current.windDeg.toFloat())
                                 .align(Alignment.CenterEnd)
-                                .padding(end = 20.dp),
+                                .padding(start = 10.dp, end = 10.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow),
                             contentDescription = null,
                             contentScale = ContentScale.Fit
@@ -451,62 +457,3 @@ private fun getIconId(str: String): Int {
         else -> R.drawable.cloud
     }
 }
-
-@Composable
-fun Header(navController: NavController) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(15.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text("x")
-        Text("Kharkov")
-        Text("x")
-    }
-}
-
-
-@Composable
-fun FindCityTextField(
-    value: String,
-    navController: NavController? = null
-) {
-    val scope = rememberCoroutineScope()
-    var state by remember { mutableStateOf(false) }
-    var angel by remember { mutableStateOf(0f) }
-    val animate by animateFloatAsState(targetValue = angel)
-    var city by remember { mutableStateOf(value) }
-    Box(
-        Modifier
-            .fillMaxWidth(0.8f)
-            .height(50.dp)
-    ) {
-            Text(
-                text = city,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .align(Alignment.Center),
-                textAlign = TextAlign.Center,
-                color = Color.Red,
-                fontSize = 14.sp
-            )
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow), null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clickable {
-                    scope.launch {
-                        delay(400L)
-                        navController!!.navigate(Screens.NewFindCityScreen.route)
-                    }
-
-                    // navController.navigate(Screens.FindCity.route)
-                },
-            contentScale = ContentScale.Fit
-        )
-    }
-}
-
-
-

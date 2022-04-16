@@ -16,22 +16,34 @@ class DataStoreRepo @Inject constructor(
 ) {
     private val dataStore = context.dataStore
 
-    suspend fun save(value: String, lat: Double, lon: Double, state: String, country: String) {
+    suspend fun save(name: String, lat: Double, lon: Double, state: String, country: String) {
         dataStore.edit {
-            it[stringPreferencesKey("city")] = value
+            it[stringPreferencesKey("city")] = name
             it[stringPreferencesKey("lat")] = lat.toString()
             it[stringPreferencesKey("lon")] = lon.toString()
-            it[stringPreferencesKey("state")] = lon.toString()
-            it[stringPreferencesKey("country")] = lon.toString()
+            it[stringPreferencesKey("state")] = state
+            it[stringPreferencesKey("country")] = country
         }
     }
 
     suspend fun readAll(): Map<Preferences.Key<*>, Any> {
         return dataStore.data.first().asMap()
     }
-    suspend fun getCityName(): String? {
-        return dataStore.data.first()[stringPreferencesKey("city")]
+
+    suspend fun clearDataStore() {
+        dataStore.edit {
+            it.clear()
+        }
     }
+
+    suspend fun getCityInfo(): List<String> {
+        return listOf(
+            dataStore.data.first()[stringPreferencesKey("city")]!!,
+            dataStore.data.first()[stringPreferencesKey("state")] ?: "",
+            dataStore.data.first()[stringPreferencesKey("country")] ?: "",
+        )
+    }
+
     suspend fun getLat(): String? {
         return dataStore.data.first()[stringPreferencesKey("lat")]
     }

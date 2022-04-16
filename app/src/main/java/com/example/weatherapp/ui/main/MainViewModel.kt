@@ -22,16 +22,18 @@ class MainViewModel @Inject constructor(
     private val _state = MutableStateFlow(emptyList<FullWeather>())
     val state: MutableStateFlow<List<FullWeather>>
         get() = _state
-    private val _name = MutableStateFlow("")
-    val name: MutableStateFlow<String>
-        get() = _name
+    private val _info = MutableStateFlow(emptyList<String>())
+    val info: MutableStateFlow<List<String>>
+        get() = _info
     init {
         viewModelScope.launch {
-            val lat = dataStore.getLat()!!
-            val lon = dataStore.getLon()!!
-            val weather = weatherRepo.getWeather(lat, lon)
-            _state.value = listOf(weather)
-            _name.value = dataStore.getCityName()!!
+            if (dataStore.count() > 0) {
+                val lat = dataStore.getLat()!!
+                val lon = dataStore.getLon()!!
+                val weather = weatherRepo.getWeather(lat, lon)
+                _state.value = listOf(weather)
+                _info.value = dataStore.getCityInfo()
+            }
         }
     }
 
