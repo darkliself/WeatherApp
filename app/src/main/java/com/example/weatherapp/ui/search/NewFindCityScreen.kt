@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui.search
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,18 +41,18 @@ import com.example.weatherapp.data.model.city.CityItem
 import com.example.weatherapp.navigation.Screens
 import com.example.weatherapp.repository.DataStoreRepo
 import com.example.weatherapp.ui.main.MainViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun NewFindCityScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-    // var cityViewModel = hiltViewModel<FindCityViewModel>()
     val dataStore = DataStoreRepo(LocalContext.current)
     var cityName by remember { mutableStateOf(emptyList<String>()) }
+    var visible by remember { mutableStateOf(false) }
     scope.launch {
         if (dataStore.count() > 0) {
             cityName = dataStore.getCityInfo()
@@ -59,14 +60,8 @@ fun NewFindCityScreen(navController: NavController) {
     }
 
     var textFieldVal by remember { mutableStateOf("") }
-
-
     val homeViewModel = hiltViewModel<MainViewModel>()
     var arr by remember { mutableStateOf(emptyList<CityItem>()) }
-
-    scope.launch {
-        println(arr)
-    }
 
     Box(
         Modifier
@@ -130,9 +125,12 @@ fun NewFindCityScreen(navController: NavController) {
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         if (textFieldVal != "") {
+                            visible = false
                             scope.launch {
-                                arr = homeViewModel.findCity(textFieldVal)
                                 keyboardController?.hide()
+                                delay(1000)
+                                arr = emptyList()
+                                arr = homeViewModel.findCity(textFieldVal)
                             }
                         }
                     }),
@@ -145,12 +143,14 @@ fun NewFindCityScreen(navController: NavController) {
                         .size(50.dp)
                         .padding(start = 10.dp)
                         .clickable {
-                            scope.launch {
-                                if (textFieldVal != "") {
+                            visible = false
+                            if (textFieldVal != "") {
+                                scope.launch {
+                                    keyboardController?.hide()
+                                    delay(1000)
+                                    arr = emptyList()
                                     arr = homeViewModel.findCity(textFieldVal)
-                                    if (arr.any()) {
-                                        keyboardController?.hide()
-                                    }
+
                                 }
                             }
                         },
@@ -160,11 +160,23 @@ fun NewFindCityScreen(navController: NavController) {
 
             if (cityName.isNotEmpty()) {
                 Text("Current place", modifier = Modifier.padding(bottom = 10.dp))
-                CityItemComponent(
-                    city = "${cityName.first()}, ${cityName.drop(1).take(2).joinToString(" ")}",
-                    modifier = Modifier.padding(bottom = 20.dp),
-                    onClick = { navController.navigate(Screens.MainScreen.route) }
-                )
+                var currentVisable by remember { mutableStateOf(false) }
+
+                scope.launch(Dispatchers.IO) {
+                    delay(500)
+                    currentVisable = true
+                }
+                AnimatedVisibility(
+                    visible = currentVisable,
+                    enter = fadeIn() + expandHorizontally(),
+                    exit = fadeOut() + shrinkHorizontally()
+                ) {
+                    CityItemComponent(
+                        city = "${cityName.first()}, ${cityName.drop(1).take(2).joinToString(" ")}",
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        onClick = { navController.navigate(Screens.MainScreen.route) }
+                    )
+                }
             }
 
             if (arr.isNotEmpty()) {
@@ -173,24 +185,34 @@ fun NewFindCityScreen(navController: NavController) {
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    scope.launch() {
+                        delay(500)
+                        visible = true
+                    }
                     arr.forEach {
                         item() {
-                            CityItemComponent(
-                                city = "${it.name}, ${it.country ?: ""} ${it.state ?: ""}",
-                                modifier = Modifier.padding(bottom = 20.dp),
-                                onClick = {
-                                    scope.launch {
-                                        dataStore.save(
-                                            name = it.name,
-                                            lat = it.lat,
-                                            lon = it.lon,
-                                            state = it.state ?: "",
-                                            country = it.country ?: ""
-                                        )
-                                        navController.navigate(Screens.MainScreen.route)
+                            AnimatedVisibility(
+                                visible = visible,
+                                enter = fadeIn() + expandHorizontally(),
+                                exit = fadeOut() + shrinkHorizontally()
+                            ) {
+                                CityItemComponent(
+                                    city = "${it.name}, ${it.country ?: ""} ${it.state ?: ""}",
+                                    modifier = Modifier.padding(bottom = 20.dp),
+                                    onClick = {
+                                        scope.launch {
+                                            dataStore.save(
+                                                name = it.name,
+                                                lat = it.lat,
+                                                lon = it.lon,
+                                                state = it.state ?: "",
+                                                country = it.country ?: ""
+                                            )
+                                            // navController.navigate(Screens.MainScreen.route)
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -199,12 +221,20 @@ fun NewFindCityScreen(navController: NavController) {
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun CityItemComponent(
     city: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+
+//    AnimatedVisibility(
+//        visible = true,
+//        enter = fadeIn() + expandHorizontally(),
+//        exit = fadeOut() + shrinkHorizontally()
+//    ) {
     Box(
         modifier = modifier
             .fillMaxWidth(0.9f)
@@ -219,8 +249,15 @@ private fun CityItemComponent(
                     )
                 )
             )
-            .clickable { onClick() }
+            .clickable {
+                onClick()
+            },
     ) {
-        Text(city, textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.Center))
+        Text(
+            text = city,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
+//    }
 }
