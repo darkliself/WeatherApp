@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.search
+package com.example.weatherapp.ui.screens.search
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -37,17 +36,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.weatherapp.R
-import com.example.weatherapp.data.model.city.CityItem
+import com.example.weatherapp.data.model.city.CityInfo
 import com.example.weatherapp.navigation.Screens
 import com.example.weatherapp.repository.DataStoreRepo
-import com.example.weatherapp.ui.main.MainViewModel
+import com.example.weatherapp.ui.screens.main.MainViewModel
 import kotlinx.coroutines.*
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun NewFindCityScreen(navController: NavController) {
+fun SearchScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val dataStore = DataStoreRepo(LocalContext.current)
@@ -61,7 +60,7 @@ fun NewFindCityScreen(navController: NavController) {
 
     var textFieldVal by remember { mutableStateOf("") }
     val homeViewModel = hiltViewModel<MainViewModel>()
-    var arr by remember { mutableStateOf(emptyList<CityItem>()) }
+    var arr by remember { mutableStateOf(emptyList<CityInfo>()) }
 
     Box(
         Modifier
@@ -77,7 +76,7 @@ fun NewFindCityScreen(navController: NavController) {
             ),
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img),
+            painter = painterResource(R.drawable.ic_bg_img),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -96,12 +95,11 @@ fun NewFindCityScreen(navController: NavController) {
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-
                 Image(
-                    ImageVector.vectorResource(id = R.drawable.search),
+                    ImageVector.vectorResource(id = R.drawable.ic_lanscape),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(60.dp)
                         .padding(end = 10.dp)
                         .clickable {
 
@@ -208,7 +206,7 @@ fun NewFindCityScreen(navController: NavController) {
                                                 state = it.state ?: "",
                                                 country = it.country ?: ""
                                             )
-                                            // navController.navigate(Screens.MainScreen.route)
+                                            navController.navigate(Screens.MainScreen.route)
                                         }
                                     }
                                 )
@@ -229,12 +227,6 @@ private fun CityItemComponent(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
-
-//    AnimatedVisibility(
-//        visible = true,
-//        enter = fadeIn() + expandHorizontally(),
-//        exit = fadeOut() + shrinkHorizontally()
-//    ) {
     Box(
         modifier = modifier
             .fillMaxWidth(0.9f)
@@ -259,5 +251,4 @@ private fun CityItemComponent(
             modifier = Modifier.align(Alignment.Center)
         )
     }
-//    }
 }

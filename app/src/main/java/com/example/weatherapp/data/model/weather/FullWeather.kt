@@ -1,5 +1,6 @@
 package com.example.weatherapp.data.model
 
+import com.example.weatherapp.R
 import com.google.gson.annotations.SerializedName
 
 
@@ -20,7 +21,6 @@ data class FullWeather(
     val timezoneOffset: Int
 
 ) {
-
     data class Daily(
         @SerializedName("clouds")
         val clouds: Int,
@@ -76,9 +76,8 @@ data class FullWeather(
             @SerializedName("night")
             val night: Double
         )
-
-
     }
+
     data class Hourly(
         @SerializedName("clouds")
         val clouds: String,
@@ -103,6 +102,7 @@ data class FullWeather(
         @SerializedName("wind_speed")
         val windSpeed: String
     )
+
     data class Current(
         @SerializedName("clouds")
         val clouds: Int,
@@ -135,7 +135,6 @@ data class FullWeather(
         @SerializedName("wind_speed")
         val windSpeed: Double
     )
-
 }
 
 data class Weather(
@@ -148,6 +147,8 @@ data class Weather(
     @SerializedName("icon")
     val icon: String
 )
+
+
 
 
 

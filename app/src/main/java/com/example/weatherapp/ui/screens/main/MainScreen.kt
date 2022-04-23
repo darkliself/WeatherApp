@@ -1,11 +1,8 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.ui.screens.main
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,25 +21,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
-
 import com.example.weatherapp.data.model.FullWeather
 import com.example.weatherapp.navigation.Screens
-import com.example.weatherapp.repository.DataStoreRepo
-
-import com.example.weatherapp.ui.main.MainViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -83,14 +71,12 @@ fun MainScreen(navController: NavController) {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         if (fullWeather.isEmpty()) {
             item {
                 CircularProgressIndicator(modifier = Modifier.fillMaxSize())
             }
         } else {
-
-            item() {
+            item {
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -100,13 +86,13 @@ fun MainScreen(navController: NavController) {
                     Text("x")
                     Text(
                         text = "${cityInfo.first()}, ${cityInfo.drop(1).joinToString(" ")}",
-                        modifier = Modifier,
+                        modifier = Modifier.align(Alignment.CenterVertically),
                     )
                     Image(
                         ImageVector.vectorResource(id = R.drawable.search),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(40.dp)
                             .clickable {
                                 navController.navigate(Screens.NewFindCityScreen.route)
                             },
@@ -114,7 +100,7 @@ fun MainScreen(navController: NavController) {
                     )
                 }
             }
-            item() {
+            item {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -126,7 +112,6 @@ fun MainScreen(navController: NavController) {
                             .align(Alignment.CenterHorizontally)
                             .clip(shape = RoundedCornerShape(50f))
                             .background(Color(0xFF32333E))
-
                     ) {
                         Text(
                             text = "$dayOfTheWeek, $day $month",
@@ -137,7 +122,7 @@ fun MainScreen(navController: NavController) {
                     }
                 }
 
-                Column() {
+                Column {
                     Row(
                         Modifier
                             .fillMaxHeight(.3f)
@@ -153,20 +138,14 @@ fun MainScreen(navController: NavController) {
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                         )
-                        Column(
-                            Modifier.clickable {
-                                Log.d("viewModelResult", fullWeather.toString())
-                            }
-                        ) {
+                        Column {
                             Text(
                                 "${current.temp.roundToInt()}°C",
                                 fontSize = 90.sp,
                                 color = Color(0xFFA2A4B5)
                             )
                             Text(
-                                current.weather[0].description.replaceFirstChar {
-                                    it.titlecase()
-                                },
+                                current.weather[0].description.replaceFirstChar { it.titlecase() },
                                 fontSize = 15.sp,
                                 textAlign = TextAlign.Center
                             )
@@ -182,22 +161,21 @@ fun MainScreen(navController: NavController) {
                             .fillMaxWidth(0.95f)
                             .height(40.dp),
                     ) {
-                        WeatherInfoWidget(
-                            Modifier
+                        WeatherInfoComponent(
+                            modifier = Modifier
                                 .align(alignment = Alignment.CenterStart)
                                 .fillMaxWidth(0.6f)
                                 .padding(start = 30.dp),
-                            listOf(
+                            items = listOf(
                                 "${daily[0].temp.max.roundToInt()}°/${daily[0].temp.min.roundToInt()}° Feels like ",
                                 "${current.feelsLike.roundToInt()}°C"
                             )
                         )
-                        WeatherInfoWidget(
-                            Modifier
+                        WeatherInfoComponent(
+                            modifier = Modifier
                                 .align(alignment = Alignment.CenterEnd)
                                 .fillMaxWidth(0.4f),
-                            listOf("Wind ", "${current.windSpeed}m/s "),
-                            // windDirection = current.windDeg
+                            items = listOf("Wind ", "${current.windSpeed}m/s "),
                         )
                         Image(
                             modifier = Modifier
@@ -220,7 +198,7 @@ fun MainScreen(navController: NavController) {
                 }
 
                 Box(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .height(70.dp)
                         .padding(top = 20.dp),
@@ -231,11 +209,11 @@ fun MainScreen(navController: NavController) {
                             .fillMaxWidth(0.6f)
                             .fillMaxHeight()
                     ) {
-                        WeatherInfoWidget(
-                            Modifier
+                        WeatherInfoComponent(
+                            modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(start = 30.dp),
-                            listOf(
+                            items = listOf(
                                 "Sunrise: ",
                                 WeatherDateFormat.getTime(
                                     seconds = current.sunrise,
@@ -244,11 +222,11 @@ fun MainScreen(navController: NavController) {
                                 )
                             )
                         )
-                        WeatherInfoWidget(
-                            Modifier
+                        WeatherInfoComponent(
+                            modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(start = 30.dp),
-                            listOf("Humidity: ", "${daily[0].humidity}%")
+                            items = listOf("Humidity: ", "${daily[0].humidity}%")
                         )
                     }
                     Box(
@@ -257,14 +235,13 @@ fun MainScreen(navController: NavController) {
                             .fillMaxHeight()
                             .align(Alignment.TopEnd)
                     ) {
-                        WeatherInfoWidget(
-                            Modifier.align(Alignment.TopStart),
-                            listOf("Wind: ", "${current.windSpeed} m/s")
-
+                        WeatherInfoComponent(
+                            modifier = Modifier.align(Alignment.TopStart),
+                            items = listOf("Wind: ", "${current.windSpeed} m/s")
                         )
-                        WeatherInfoWidget(
-                            Modifier.align(Alignment.BottomStart),
-                            listOf(
+                        WeatherInfoComponent(
+                            modifier = Modifier.align(Alignment.BottomStart),
+                            items = listOf(
                                 "Sunset: ",
                                 WeatherDateFormat.getTime(
                                     seconds = current.sunset,
@@ -281,20 +258,19 @@ fun MainScreen(navController: NavController) {
                 ) {
                     items(hourly.count() - 1) { index ->
                         WeatherHourlyItem(
-                            WeatherDateFormat.getTime(
+                            time = WeatherDateFormat.getTime(
                                 seconds = hourly[index + 1].dt,
                                 timeOffset = timeOffset,
                                 dateFormat = "hh:mm"
                             ),
-                            hourly[index + 1].getIcon(),
-                            "${hourly[index + 1].temp.roundToInt()}"
-
+                            icon = hourly[index + 1].getIcon(),
+                            temp = "${hourly[index + 1].temp.roundToInt()}"
                         )
                     }
                 }
             }
 
-            item() {
+            item {
                 Box(
                     Modifier
                         .fillMaxWidth(0.98f)
@@ -325,7 +301,7 @@ fun MainScreen(navController: NavController) {
                             }
                         }
                         repeat(daily.size - 1) {
-                            DailyWidget(
+                            DailyComponent(
                                 weekDay = WeatherDateFormat.getWeekDay(daily[it + 1].dt)
                                     .toString(),
                                 icon = daily[it + 1].getIcon(),
@@ -374,7 +350,7 @@ private fun WeatherHourlyItem(
 }
 
 @Composable
-private fun DailyWidget(
+private fun DailyComponent(
     weekDay: String,
     icon: Int,
     max: String,
@@ -414,7 +390,7 @@ private fun DailyWidget(
 }
 
 @Composable
-private fun WeatherInfoWidget(
+private fun WeatherInfoComponent(
     modifier: Modifier = Modifier,
     items: List<String>,
 ) {
@@ -425,6 +401,7 @@ private fun WeatherInfoWidget(
         }
     }
 }
+
 
 private fun FullWeather.Daily.getIcon(): Int {
     return getIconId(weather.first().icon)
@@ -454,6 +431,6 @@ private fun getIconId(str: String): Int {
         "10n" -> R.drawable.ic_10n
         "11d" -> R.drawable.ic_11d
         "11n" -> R.drawable.ic_11n
-        else -> R.drawable.cloud
+        else -> R.drawable.cloud_sun
     }
 }

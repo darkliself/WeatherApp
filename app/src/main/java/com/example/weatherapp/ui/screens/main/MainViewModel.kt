@@ -1,10 +1,10 @@
-package com.example.weatherapp.ui.main
+package com.example.weatherapp.ui.screens.main
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.data.model.*
-import com.example.weatherapp.data.model.city.CityItem
+import com.example.weatherapp.data.model.city.CityInfo
 import com.example.weatherapp.repository.DataStoreRepo
 import com.example.weatherapp.repository.WeatherRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,12 +37,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun findCity(cityName: String): List<CityItem> {
+    suspend fun findCity(cityName: String): List<CityInfo> {
             return weatherRepo.findCity(cityName)
     }
-
-//    suspend fun getCurrent2(): List<FullWeather.Hourly> {
-//
-//        return weatherRepo.getHourlyWeather()
-//    }
 }

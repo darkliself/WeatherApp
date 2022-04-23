@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/1/.gradle/caches/transforms-3/236be9e0e11b83579f19d84018577853/transformed/core-1.7.0/res/drawable/notification_icon_background.xml" value="0.1105" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable-v21/app_widget_background.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud_sun.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.116" />
@@ -30,7 +31,10 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_city_icon.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloud_computing__1___1_.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_globe_map.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_gps_navigation.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_lanscape.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_local.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_rainy__2_.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_search.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_tempory.xml" value="0.116" />

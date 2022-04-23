@@ -6,14 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_MONTH
 
-
-fun main() {
-    println(WeatherDateFormat.getDayOfTheMonth(1649235600))
-}
-
 object WeatherDateFormat {
-    @SuppressLint("ConstantLocale")
-    private val calendar = Calendar.getInstance(Locale.getDefault())
+    private val calendar = Calendar.getInstance()
 
     fun getMouth(seconds: Long = Date().time / 1000, timeZone: Long = 0L): String? {
         calendar.time = Date((seconds - timeZone) * 1000)

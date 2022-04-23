@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object WeatherApiModule {
@@ -27,7 +28,7 @@ object WeatherApiModule {
 }
 
 object Constants {
-    const val BASE_URL = "https://api.openweathermap.org/"// data/2.5/
+    const val BASE_URL = "https://api.openweathermap.org/"
     const val API_KEY = "76bb42ac7cb89fc255ba962c7916dd20"
     const val UNITS = "metric"
 }

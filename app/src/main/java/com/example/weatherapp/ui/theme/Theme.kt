@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.theme
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -26,7 +27,7 @@ private val LightColorPalette = lightColors(
     onSurface = Color.Black,
     */
 )
-
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun WeatherAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {

@@ -25,11 +25,12 @@ class DataStoreRepo @Inject constructor(
             it[stringPreferencesKey("country")] = country
         }
     }
-
+    // only for tests
     suspend fun readAll(): Map<Preferences.Key<*>, Any> {
         return dataStore.data.first().asMap()
     }
 
+    // only for tests
     suspend fun clearDataStore() {
         dataStore.edit {
             it.clear()
