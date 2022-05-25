@@ -9,7 +9,7 @@ import java.util.Calendar.DAY_OF_MONTH
 object WeatherDateFormat {
     private val calendar = Calendar.getInstance()
 
-    fun getMouth(seconds: Long = Date().time / 1000, timeZone: Long = 0L): String? {
+    fun getMonth(seconds: Long = Date().time / 1000, timeZone: Long = 0L): String? {
         calendar.time = Date((seconds - timeZone) * 1000)
         return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US)
     }
@@ -21,7 +21,7 @@ object WeatherDateFormat {
 
     fun getDayOfTheMonth(seconds: Long = Date().time / 1000, timeZone: Long = 0L): Int {
         calendar.time = Date((seconds - timeZone) * 1000)
-        return calendar[DAY_OF_MONTH]
+           return calendar[DAY_OF_MONTH]
     }
 
     @SuppressLint("SimpleDateFormat")

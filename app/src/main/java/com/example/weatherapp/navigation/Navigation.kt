@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.repository.DataStoreRepo
 import com.example.weatherapp.ui.screens.main.MainScreen
+import com.example.weatherapp.ui.screens.permission.NotAvailablePermission
 import com.example.weatherapp.ui.screens.search.SearchScreen
 import kotlinx.coroutines.launch
 
@@ -45,6 +46,9 @@ fun NavigationScreens(navController: NavHostController, startDestination: String
         }
         composable(route = Screens.NewFindCityScreen.route) {
             SearchScreen(navController = navController)
+        }
+        composable(route = Screens.NotAvailablePermission.route) {
+            NotAvailablePermission()
         }
     }
 }

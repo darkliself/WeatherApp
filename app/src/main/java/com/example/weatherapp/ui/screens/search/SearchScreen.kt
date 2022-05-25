@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui.screens.search
 
 import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,18 +16,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +41,15 @@ import com.example.weatherapp.navigation.Screens
 import com.example.weatherapp.repository.DataStoreRepo
 import com.example.weatherapp.ui.screens.main.MainViewModel
 import kotlinx.coroutines.*
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.glance.BitmapImageProvider
+import androidx.glance.GlanceModifier
+import androidx.glance.ImageProvider
+import androidx.glance.layout.size
+import com.example.weatherapp.ui.theme.Images
+import com.skydoves.landscapist.glide.GlideImage
+import java.io.File
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
@@ -52,6 +61,7 @@ fun SearchScreen(navController: NavController) {
     val dataStore = DataStoreRepo(LocalContext.current)
     var cityName by remember { mutableStateOf(emptyList<String>()) }
     var visible by remember { mutableStateOf(false) }
+
     scope.launch {
         if (dataStore.count() > 0) {
             cityName = dataStore.getCityInfo()
@@ -61,7 +71,6 @@ fun SearchScreen(navController: NavController) {
     var textFieldVal by remember { mutableStateOf("") }
     val homeViewModel = hiltViewModel<MainViewModel>()
     var arr by remember { mutableStateOf(emptyList<CityInfo>()) }
-
     Box(
         Modifier
             .fillMaxWidth()
@@ -76,141 +85,136 @@ fun SearchScreen(navController: NavController) {
             ),
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_bg_img),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_night),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.4f)
-                .align(BiasAlignment(horizontalBias = 0f, verticalBias = 0.8f)),
-            contentScale = ContentScale.FillWidth
+                .fillMaxHeight(0.55f)
+                .align(BiasAlignment(horizontalBias = 0f, verticalBias = 0.7f)),
+            contentScale = ContentScale.Fit,
+            alpha = 0.7f
         )
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(70.dp)
         ) {
-            Row(
+            ImageCard(
+                modifier = Modifier.align(Alignment.BottomStart),
+                img = R.drawable.ic_location_mark,
+                onClick = {
+
+                }
+            )
+            TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Image(
-                    ImageVector.vectorResource(id = R.drawable.ic_lanscape),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(end = 10.dp)
-                        .clickable {
-
-                        },
-                    contentScale = ContentScale.Fit
-                )
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(50.dp),
-                    value = textFieldVal,
-                    onValueChange = { textFieldVal = it.replace("\r", "").replace("\n", "") },
-                    textStyle = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        color = Color.White
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.White,
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        if (textFieldVal != "") {
-                            visible = false
-                            scope.launch {
-                                keyboardController?.hide()
-                                delay(1000)
-                                arr = emptyList()
-                                arr = homeViewModel.findCity(textFieldVal)
-                            }
+                    .fillMaxWidth(0.6f)
+                    .height(50.dp)
+                    .align(Alignment.BottomCenter),
+                value = textFieldVal,
+                onValueChange = { textFieldVal = it.replace("\r", "").replace("\n", "") },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
+                    color = Color.White
+                ),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.White,
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    if (textFieldVal != "") {
+                        visible = false
+                        scope.launch {
+                            keyboardController?.hide()
+                            delay(1000)
+                            arr = emptyList()
+                            arr = homeViewModel.findCity(textFieldVal)
                         }
-                    }),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                )
-                Image(
-                    ImageVector.vectorResource(id = R.drawable.search),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(start = 10.dp)
-                        .clickable {
-                            visible = false
-                            if (textFieldVal != "") {
-                                scope.launch {
-                                    keyboardController?.hide()
-                                    delay(1000)
-                                    arr = emptyList()
-                                    arr = homeViewModel.findCity(textFieldVal)
-
-                                }
-                            }
-                        },
-                    contentScale = ContentScale.Fit
-                )
-            }
-
-            if (cityName.isNotEmpty()) {
-                Text("Current place", modifier = Modifier.padding(bottom = 10.dp))
-                var currentVisable by remember { mutableStateOf(false) }
-
-                scope.launch(Dispatchers.IO) {
-                    delay(500)
-                    currentVisable = true
-                }
-                AnimatedVisibility(
-                    visible = currentVisable,
-                    enter = fadeIn() + expandHorizontally(),
-                    exit = fadeOut() + shrinkHorizontally()
-                ) {
-                    CityItemComponent(
-                        city = "${cityName.first()}, ${cityName.drop(1).take(2).joinToString(" ")}",
-                        modifier = Modifier.padding(bottom = 20.dp),
-                        onClick = { navController.navigate(Screens.MainScreen.route) }
-                    )
-                }
-            }
-
-            if (arr.isNotEmpty()) {
-                Text("Search result", modifier = Modifier.padding(bottom = 10.dp))
-                LazyColumn(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    scope.launch() {
-                        delay(500)
-                        visible = true
                     }
-                    arr.forEach {
-                        item() {
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn() + expandHorizontally(),
-                                exit = fadeOut() + shrinkHorizontally()
-                            ) {
-                                CityItemComponent(
-                                    city = "${it.name}, ${it.country ?: ""} ${it.state ?: ""}",
-                                    modifier = Modifier.padding(bottom = 20.dp),
-                                    onClick = {
-                                        scope.launch {
-                                            dataStore.save(
-                                                name = it.name,
-                                                lat = it.lat,
-                                                lon = it.lon,
-                                                state = it.state ?: "",
-                                                country = it.country ?: ""
-                                            )
-                                            navController.navigate(Screens.MainScreen.route)
-                                        }
+                }),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            )
+            ImageCard(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                img = R.drawable.search,
+                onClick = {
+                    visible = false
+                    if (textFieldVal != "") {
+                        scope.launch {
+                            keyboardController?.hide()
+                            delay(1000)
+                            arr = emptyList()
+                            arr = homeViewModel.findCity(textFieldVal)
+                        }
+                    }
+                }
+            )
+        }
+
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(90.dp))
+
+        if (cityName.isNotEmpty()) {
+            Text("Current place", modifier = Modifier.padding(bottom = 10.dp))
+            var currentVisable by remember { mutableStateOf(false) }
+
+            scope.launch(Dispatchers.IO) {
+                delay(500)
+                currentVisable = true
+            }
+            AnimatedVisibility(
+                visible = currentVisable,
+                enter = fadeIn() + expandHorizontally(),
+                exit = fadeOut() + shrinkHorizontally()
+            ) {
+                CityItemComponent(
+                    city = "${cityName.first()}, ${cityName.drop(1).take(2).joinToString(" ")}",
+                    modifier = Modifier.padding(bottom = 20.dp),
+                    onClick = { navController.navigate(Screens.MainScreen.route) }
+                )
+            }
+        }
+
+        if (arr.isNotEmpty()) {
+            Text("Search result", modifier = Modifier.padding(bottom = 10.dp))
+            LazyColumn(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                scope.launch() {
+                    delay(500)
+                    visible = true
+                }
+                arr.forEach {
+                    item() {
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = fadeIn() + expandHorizontally(),
+                            exit = fadeOut() + shrinkHorizontally()
+                        ) {
+                            CityItemComponent(
+                                city = "${it.name}, ${it.country ?: ""} ${it.state ?: ""}",
+                                modifier = Modifier.padding(bottom = 20.dp),
+                                onClick = {
+                                    scope.launch {
+                                        dataStore.save(
+                                            name = it.name,
+                                            lat = it.lat,
+                                            lon = it.lon,
+                                            state = it.state ?: "",
+                                            country = it.country ?: ""
+                                        )
+                                        navController.navigate(Screens.MainScreen.route)
                                     }
-                                )
-                            }
+                                }
+                            )
                         }
                     }
                 }
@@ -218,6 +222,7 @@ fun SearchScreen(navController: NavController) {
         }
     }
 }
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalAnimationApi::class)
@@ -251,4 +256,38 @@ private fun CityItemComponent(
             modifier = Modifier.align(Alignment.Center)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    SearchScreen(NavController(LocalContext.current))
+}
+
+
+@Composable
+fun ImageCard(
+    modifier: Modifier = Modifier,
+    @DrawableRes img: Int,
+    onClick: () -> Unit,
+) {
+    Box(modifier = modifier
+        .fillMaxWidth(0.2f)
+        .fillMaxHeight()
+//        .border(2.dp, Color.Black)
+        .clickable {
+            onClick()
+        }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = img),
+            contentDescription = null,
+            modifier = Modifier
+                .size(50.dp)
+                .align(Alignment.Center),
+            // contentScale = ContentScale.Fit,
+            // alpha = 0.7f
+        )
+    }
+
+
 }

@@ -8,6 +8,7 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/cloud_sun.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/fc_background.xml" value="0.124" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/find_city_background.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_01d.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_01n.xml" value="0.116" />
@@ -30,13 +31,20 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_ccccc.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_city_icon.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_cloud_computing__1___1_.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_endless_constellation.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_florida.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_globe_map.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_gps_navigation.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_lanscape.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_local.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_location_mark.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_night.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_rainy__2_.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_search.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_sprinkle.xml" value="0.11" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_sprinkle__3_.xml" value="0.264" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_teestting.xml" value="0.11" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_tempory.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_thunder.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_world.xml" value="0.11" />
@@ -47,6 +55,8 @@
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/test.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/test2.xml" value="0.116" />
         <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/w01d.xml" value="0.116" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/layout/weather_app_widget.xml" value="0.11302083333333333" />
+        <entry key="..\:/Users/1/AndroidStudioProjects/WeatherApp/app/src/main/res/layout/weather_app_widget_configure.xml" value="0.11302083333333333" />
       </map>
     </option>
   </component>

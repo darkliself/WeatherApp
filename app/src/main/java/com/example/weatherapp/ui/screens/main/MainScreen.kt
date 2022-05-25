@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,16 +22,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.weatherapp.R
 import com.example.weatherapp.WeatherDateFormat
 import com.example.weatherapp.data.model.FullWeather
 import com.example.weatherapp.navigation.Screens
+import com.example.weatherapp.ui.screens.search.ImageCard
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -48,7 +52,7 @@ fun MainScreen(navController: NavController) {
     val cityInfo by homeViewModel.info.collectAsState()
     val dayOfTheWeek = WeatherDateFormat.getWeekDay()
     val day = WeatherDateFormat.getDayOfTheMonth()
-    val month = WeatherDateFormat.getMouth()
+    val month = WeatherDateFormat.getMonth()
 
     if (fullWeather.isNotEmpty()) {
         current = fullWeather[0].current
@@ -57,50 +61,51 @@ fun MainScreen(navController: NavController) {
         timeOffset = fullWeather[0].timezoneOffset
     }
 
-    LazyColumn(
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF454857),
-                        Color(0xFF2C2D35)
+    if (fullWeather.isEmpty()) {
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+    } else {
+        LazyColumn(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF5E6174),
+                            Color(0xFF1F2027)
+                        )
                     )
-                )
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (fullWeather.isEmpty()) {
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             item {
-                CircularProgressIndicator(modifier = Modifier.fillMaxSize())
-            }
-        } else {
-            item {
-                Row(
+                Box(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 30.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                        .height(70.dp),
+                    //.zIndex(1f),
                 ) {
-                    Text("x")
                     Text(
                         text = "${cityInfo.first()}, ${cityInfo.drop(1).joinToString(" ")}",
-                        modifier = Modifier.align(Alignment.CenterVertically),
+                        modifier = Modifier.align(Alignment.Center),
                     )
-                    Image(
-                        ImageVector.vectorResource(id = R.drawable.search),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clickable {
-                                navController.navigate(Screens.NewFindCityScreen.route)
-                            },
-                        contentScale = ContentScale.Fit
+
+                    Divider(
+                        Modifier
+                            .fillMaxWidth(0.6f)
+                            .align(Alignment.BottomCenter),
+                        color = Color.Black
+                    )
+
+                    ImageCard(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        img = R.drawable.search,
+                        onClick = {
+                            navController.navigate(Screens.NewFindCityScreen.route)
+                        }
                     )
                 }
-            }
-            item {
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -138,16 +143,19 @@ fun MainScreen(navController: NavController) {
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                         )
+
                         Column {
                             Text(
                                 "${current.temp.roundToInt()}°C",
                                 fontSize = 90.sp,
                                 color = Color(0xFFA2A4B5)
                             )
+
                             Text(
-                                current.weather[0].description.replaceFirstChar { it.titlecase() },
+                                text = current.weather[0].description.replaceFirstChar { it.titlecase() },
                                 fontSize = 15.sp,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
                             )
                         }
                     }
@@ -164,29 +172,32 @@ fun MainScreen(navController: NavController) {
                         WeatherInfoComponent(
                             modifier = Modifier
                                 .align(alignment = Alignment.CenterStart)
-                                .fillMaxWidth(0.6f)
-                                .padding(start = 30.dp),
+                                .fillMaxWidth(0.6f),
+                            // .padding(start = 10.dp),
                             items = listOf(
                                 "${daily[0].temp.max.roundToInt()}°/${daily[0].temp.min.roundToInt()}° Feels like ",
                                 "${current.feelsLike.roundToInt()}°C"
                             )
                         )
+
                         WeatherInfoComponent(
                             modifier = Modifier
                                 .align(alignment = Alignment.CenterEnd)
-                                .fillMaxWidth(0.4f),
+                                .fillMaxWidth(0.45f),
                             items = listOf("Wind ", "${current.windSpeed}m/s "),
                         )
+
                         Image(
                             modifier = Modifier
                                 .rotate(current.windDeg.toFloat())
                                 .align(Alignment.CenterEnd)
-                                .padding(start = 10.dp, end = 10.dp),
+                                .padding(start = 10.dp, end = 5.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow),
                             contentDescription = null,
                             contentScale = ContentScale.Fit
                         )
                     }
+
                     Image(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
@@ -212,7 +223,7 @@ fun MainScreen(navController: NavController) {
                         WeatherInfoComponent(
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding(start = 30.dp),
+                                .padding(start = 20.dp),
                             items = listOf(
                                 "Sunrise: ",
                                 WeatherDateFormat.getTime(
@@ -222,16 +233,17 @@ fun MainScreen(navController: NavController) {
                                 )
                             )
                         )
+
                         WeatherInfoComponent(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(start = 30.dp),
+                                .padding(start = 20.dp),
                             items = listOf("Humidity: ", "${daily[0].humidity}%")
                         )
                     }
                     Box(
                         Modifier
-                            .fillMaxWidth(0.4f)
+                            .fillMaxWidth(0.45f)
                             .fillMaxHeight()
                             .align(Alignment.TopEnd)
                     ) {
@@ -239,6 +251,7 @@ fun MainScreen(navController: NavController) {
                             modifier = Modifier.align(Alignment.TopStart),
                             items = listOf("Wind: ", "${current.windSpeed} m/s")
                         )
+
                         WeatherInfoComponent(
                             modifier = Modifier.align(Alignment.BottomStart),
                             items = listOf(
@@ -296,7 +309,9 @@ fun MainScreen(navController: NavController) {
                                     .padding(top = 30.dp, end = 30.dp, bottom = 20.dp)
                             ) {
                                 Text("High", Modifier.align(Alignment.CenterStart))
+
                                 Text("|", Modifier.align(Alignment.Center))
+
                                 Text("Low", Modifier.align(Alignment.CenterEnd))
                             }
                         }
